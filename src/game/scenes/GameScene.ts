@@ -7,6 +7,7 @@ import { localDayKey } from '../systems/PieceGenerator';
 import { BoardView } from '../objects/BoardView';
 import { PieceView } from '../objects/PieceView';
 import { AudioService } from '../../services/AudioService';
+import { NativeLifecycleService } from '../../services/NativeLifecycleService';
 import { StorageService } from '../../services/StorageService';
 import { DESIGN_WIDTH } from '../config/gameConfig';
 import { computeBoardMetrics, computeTrayLayout, LAYOUT } from '../ui/layout';
@@ -18,6 +19,7 @@ const DRAG_THRESHOLD = 8;
 export class GameScene extends Phaser.Scene {
   private storage = new StorageService();
   private audio!: AudioService;
+  private nativeLifecycle!: NativeLifecycleService;
   private boardManager!: BoardManager;
   private boardView!: BoardView;
   private pieceViews: PieceView[] = [];
@@ -26,6 +28,7 @@ export class GameScene extends Phaser.Scene {
   private undoText!: Phaser.GameObjects.Text;
   private muteLabel!: Phaser.GameObjects.Text;
   private overlay?: Phaser.GameObjects.Container;
+  private overlayKind: 'none' | 'tutorial' | 'gameover' = 'none';
   private trayPanel?: Phaser.GameObjects.Graphics;
   private inputLocked = false;
 
@@ -41,6 +44,10 @@ export class GameScene extends Phaser.Scene {
   create(): void {
     this.cameras.main.setBackgroundColor(PALETTE.background);
     this.audio = new AudioService(this.storage.isMuted());
+    this.nativeLifecycle = new NativeLifecycleService(this.audio);
+    void this.nativeLifecycle.start();
+    this.nativeLifecycle.setBackButtonHandler(() => this.handleAndroidBack());
+
     this.drawBackdrop();
 
     const best = this.storage.getBestScore();
@@ -57,6 +64,25 @@ export class GameScene extends Phaser.Scene {
     if (!this.storage.hasSeenTutorial()) {
       this.showTutorial();
     }
+  }
+
+  shutdown(): void {
+    this.nativeLifecycle?.stop();
+  }
+
+  /** @returns true if the back press was consumed by the game UI. */
+  private handleAndroidBack(): boolean {
+    if (this.overlayKind === 'tutorial' && this.overlay) {
+      this.storage.setTutorialSeen(true);
+      this.audio.playUi();
+      this.overlay.destroy();
+      this.overlay = undefined;
+      this.overlayKind = 'none';
+      this.inputLocked = false;
+      return true;
+    }
+    // Game-over and empty overlays: let native layer minimize the app.
+    return false;
   }
 
   private drawBackdrop(): void {
@@ -620,6 +646,7 @@ export class GameScene extends Phaser.Scene {
 
   private showTutorial(): void {
     this.inputLocked = true;
+    this.overlayKind = 'tutorial';
     this.overlay = createCenteredModal(this, {
       title: 'How to Play',
       body:
@@ -633,6 +660,7 @@ export class GameScene extends Phaser.Scene {
             this.audio.playUi();
             this.overlay?.destroy();
             this.overlay = undefined;
+            this.overlayKind = 'none';
             this.inputLocked = false;
           },
         },
@@ -643,6 +671,7 @@ export class GameScene extends Phaser.Scene {
   private showGameOver(): void {
     this.overlay?.destroy();
     this.inputLocked = true;
+    this.overlayKind = 'gameover';
     const state = this.boardManager.getState();
     const mode = this.boardManager.getMode();
     const title = mode === 'daily' ? 'Daily Complete' : 'Game Over';
@@ -662,6 +691,7 @@ export class GameScene extends Phaser.Scene {
             this.audio.playUi();
             this.overlay?.destroy();
             this.overlay = undefined;
+            this.overlayKind = 'none';
             this.inputLocked = false;
             if (mode === 'daily') {
               const day = this.boardManager.getDayKey() ?? localDayKey();

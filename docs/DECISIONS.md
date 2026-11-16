@@ -106,3 +106,17 @@ Record significant decisions here. New chats must read this before changing esta
 - **Decision:** Board/tray use `src/game/ui/layout.ts`; overlays use `ModalFactory` for centered stacking.
 - **Rationale:** Fixes drift between tray panel vs piece slots and uneven modal text/button alignment.
 - **Status:** Accepted
+
+## DEC-016 — Android app identity
+
+- **Date:** 2026-11-16
+- **Decision:** Application ID `com.blockquest.game`; Capacitor 8.6.2; portrait-only activity.
+- **Rationale:** Stable reverse-DNS id for Play Console; matches product orientation.
+- **Status:** Accepted
+
+## DEC-017 — Commit Android project, not iOS
+
+- **Date:** 2026-11-16
+- **Decision:** Version-control `android/` sources; keep `ios/` out of the tree on Windows.
+- **Rationale:** Enables Android iteration without macOS; respects DEC-006.
+- **Status:** Accepted

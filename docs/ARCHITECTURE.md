@@ -40,6 +40,7 @@ Systems may call domain functions. Views must not contain game-rule logic.
 |------|----------------|
 | `StorageService.ts` | Best score, daily best, mute, tutorial flags via localStorage |
 | `AudioService.ts` | Procedural SFX + mute |
+| `NativeLifecycleService.ts` | Capacitor back button + app pause/resume (no-op on web) |
 
 ## Data Flow (Placement)
 

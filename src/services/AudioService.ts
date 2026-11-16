@@ -23,6 +23,18 @@ export class AudioService {
     return this.muted;
   }
 
+  /** Suspend audio graph without changing mute preference (app background). */
+  suspendOutput(): void {
+    void this.ctx?.suspend();
+  }
+
+  /** Resume audio graph if not muted (app foreground). */
+  resumeOutput(): void {
+    if (!this.muted) {
+      void this.ensureContext()?.resume();
+    }
+  }
+
   playPlace(): void {
     this.tone(420, 0.05, 'triangle', 0.05);
     this.tone(560, 0.06, 'triangle', 0.035, 0.04);

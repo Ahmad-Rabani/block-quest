@@ -121,9 +121,19 @@ Phases must be completed against acceptance criteria. Do not mark complete witho
 
 ## PHASE 5 — Android Integration
 
-**Status:** Not started
+**Status:** Configured on Windows — emulator/device QA pending SDK
 
-Capacitor Android, app id, emulator/device, lifecycle, back button, offline, production config prep.
+### Tasks
+
+- [x] Integrate Capacitor 8
+- [x] Configure Android project (`com.blockquest.game`)
+- [x] Configure application identifier + portrait lock
+- [x] Handle app lifecycle (pause/resume audio)
+- [x] Handle Android back button (dismiss tutorial / minimize)
+- [x] Verify offline gameplay architecture (localStorage; no network required for play)
+- [x] Prepare Android production config basics (versionName, docs)
+- [ ] Test on Android emulator (requires Android SDK / `ANDROID_HOME`)
+- [ ] Test on a physical Android device
 
 ---
 

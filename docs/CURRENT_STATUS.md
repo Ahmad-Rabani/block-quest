@@ -1,39 +1,45 @@
 # Block Quest — Current Status
 
 **Last updated:** 2026-11-16  
-**Current phase:** Phase 4 — Progression and Retention (**partial — evaluated slice shipped**)  
-**Active milestone:** Await approval for Phase 5 Android, or further Phase 4 features
+**Current phase:** Phase 5 — Android Integration (**configured; device/emulator QA pending SDK**)  
+**Active milestone:** Install Android SDK / Studio and run on emulator or device; or proceed to Phase 6 on macOS later
 
 ## Project state
 
-- Playable browser game with Phase 3 polish plus Phase 4 retention slice.
-- UI alignment fixed: shared layout grid for board/tray; centered modal factory.
-- Classic + Daily modes, Undo (3/run), daily best persistence.
-- Domain remains Phaser-free; **20** unit tests passing.
+- Capacitor **8.6.2** integrated; Android platform at `android/`
+- App ID: `com.blockquest.game` (portrait locked)
+- Native lifecycle: back button + pause/resume audio via `@capacitor/app`
+- Web build + `cap sync` verified; unit tests **20/20**
+- This machine has **no `ANDROID_HOME` / Android SDK** — emulator and physical-device runs not executed here
 
 ## Completed
 
-### Phases 0–3
-- Foundation, engine, playable MVP, UX polish (see changelog)
+### Phases 0–4
+- Foundation, engine, playable MVP, UX polish, Undo + Daily (see changelog)
 
-### Phase 4 (evaluated slice)
-- **Shipped:** optional Undo (3 per run), Daily Challenge (seeded PRNG + daily best)
-- **UI fix:** modal centering via `ModalFactory`; tray/board share `LAYOUT` margins/slot centering
-- **Deferred (assessed lower priority / higher cost for now):** themes, special blocks, full achievements tree
+### Phase 5 (this session)
+- Capacitor core/cli/android/app installed
+- `capacitor.config.ts` + `docs/ANDROID.md`
+- `android/` project generated and synced
+- Portrait orientation, versionName `0.1.0`
+- `NativeLifecycleService` (back button, app state)
+- npm scripts: `cap:sync`, `cap:open:android`
+- **Not done here:** emulator/device smoke test (SDK missing)
 
 ## Incomplete / next
 
-1. **Next task:** Phase 5 — Android / Capacitor integration (if approved)
-2. Optional Phase 4 follow-ups: themes, achievements, special blocks
-3. Exhaustive device QA → Phase 8
-4. No ads/analytics without Phase 7 approval
+1. On a machine with Android Studio/SDK: `npm run cap:sync` → Run on emulator/device → verify touch, offline, back, lifecycle
+2. Phase 6 iOS on macOS when ready
+3. Phase 7 ads/analytics only with explicit approval
+4. Phase 8 full QA matrix
 
 ## Known bugs / limitations
 
-- Daily challenge is local-only (no global leaderboard)
-- Undo count is fixed at 3 per run
-- Themes / special blocks not implemented
+- Emulator/device verification blocked without Android SDK on this Windows environment
+- Default Capacitor launcher icons (store icons later in Phase 9)
+- INTERNET permission present (WebView); gameplay itself is offline
 
 ## Blockers / decisions needed
 
-- Confirm whether to proceed to **Phase 5 Android** or continue Phase 4 extras
+- Confirm Android Studio/SDK path for local device testing
+- Whether to continue with Phase 6 (macOS) or Phase 8 QA next

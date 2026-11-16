@@ -1,5 +1,25 @@
 # Block Quest — Changelog
 
+## 2026-11-16 — Phase 5 Android / Capacitor
+
+### Added
+- Capacitor 8.6.2 + `@capacitor/app` 8.1.2
+- `android/` native project (`com.blockquest.game`)
+- `capacitor.config.ts`, `docs/ANDROID.md`
+- `NativeLifecycleService` (back button + app state audio suspend/resume)
+- Scripts: `cap:sync`, `cap:open:android`
+
+### Changed
+- Portrait locked in `AndroidManifest.xml`
+- `versionName` set to `0.1.0`
+- `.gitignore` tracks Android sources; ignores build outputs / iOS
+
+### Verified
+- `npm test` — 20 passed
+- `npm run build` — success
+- `npx cap add android` / `npx cap sync android` — success
+- Emulator/device run — **not executed** (no Android SDK on this machine)
+
 ## 2026-11-16 — Phase 4 slice + UI alignment
 
 ### Fixed

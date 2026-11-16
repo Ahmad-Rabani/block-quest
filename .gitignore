@@ -10,5 +10,14 @@ coverage/
 .vscode/*
 !.vscode/extensions.json
 *.log
-android/
+# Native projects: commit Android for Phase 5; keep iOS out until macOS (DEC-006).
 ios/
+android/app/build/
+android/build/
+android/.gradle/
+android/local.properties
+android/captures/
+*.apk
+*.aab
+*.keystore
+*.jks

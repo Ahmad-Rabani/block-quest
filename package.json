@@ -9,15 +9,22 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "cap:sync": "npm run build && npx cap sync android",
+    "cap:open:android": "npx cap open android",
+    "android:sync": "npm run cap:sync"
   },
   "engines": {
     "node": ">=22"
   },
   "dependencies": {
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/core": "^8.6.2",
     "phaser": "^4.2.1"
   },
   "devDependencies": {
+    "@capacitor/android": "^8.6.2",
+    "@capacitor/cli": "^8.6.2",
     "@types/node": "^26.6.6",
     "typescript": "^7.0.2",
     "vite": "^8.3.8",
