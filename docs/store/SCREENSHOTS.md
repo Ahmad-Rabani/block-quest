@@ -33,11 +33,14 @@ Capture **portrait** frames. Useful minimum set (4–8):
 
 ## How to capture (browser)
 
-1. `npm run dev`
+1. `npm run dev` (or use the Vercel deploy on a phone)
 2. Open DevTools → device toolbar → **390×844** (or 1080×1920 scaled)
 3. Hide DevTools overlay if it appears in the shot
-4. Play until the board looks premium, then capture
-5. Optional: full-page tools / OS screenshot, then crop to the game canvas only
+4. Capture from the menu hub, mid-game board, clear feedback, and game over
+5. Crop to the game canvas only (no browser URL bar)
+6. Save as PNG into `assets/store/screenshots/android/` using names like:
+   - `01-menu.png`, `02-classic-play.png`, `03-drag-preview.png`,
+     `04-line-clear.png`, `05-daily.png`, `06-game-over.png`
 
 ## How to capture (Android)
 

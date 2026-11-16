@@ -8,6 +8,17 @@
 2. A Play App Signing / upload keystore (**do not commit keystores**)
 3. Latest web assets synced
 
+### First-time Android Studio setup (Windows)
+
+1. Install [Android Studio](https://developer.android.com/studio)
+2. Open SDK Manager → install a recent **Android SDK** + a system image (e.g. API 34)
+3. Set environment variable (User or System):
+   - `ANDROID_HOME` = e.g. `C:\Users\<you>\AppData\Local\Android\Sdk`
+   - Add `%ANDROID_HOME%\platform-tools` to `PATH`
+4. Restart the terminal / Cursor, then verify: `adb version`
+5. From this repo: `npm run cap:sync` then `npm run cap:open:android`
+6. Run on emulator or USB device (enable USB debugging)
+
 ## Build web + sync
 
 ```bash

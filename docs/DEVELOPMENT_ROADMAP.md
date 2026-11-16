@@ -161,16 +161,17 @@ No ads or analytics before approval.
 
 ## PHASE 8 — Quality Assurance
 
-**Status:** In progress — automated layer complete; manual/device pending
+**Status:** In progress — automated + mobile web framing; manual/device pending
 
 ### Tasks
 
 - [x] Expand automated edge-case + persistence + undo-limit tests
 - [x] Create permanent `docs/QA_CHECKLIST.md`
 - [x] Verify `npm test` + `npm run build` on this machine
+- [x] Mobile browser framing polish (`100dvh` + visualViewport sync)
 - [ ] Manual browser checklist (sections B–D) — owner playtest
 - [ ] Multi-size DevTools pass
-- [ ] Android emulator/device checklist (section F) — needs SDK
+- [ ] Android emulator/device checklist (section F) — needs SDK / `ANDROID_HOME`
 - [ ] Interruption / offline device pass
 - [ ] Low-end performance soak
 

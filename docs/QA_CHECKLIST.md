@@ -71,7 +71,7 @@ Mark each item: `[ ]` pending · `[x]` pass · `[!]` fail (note bug)
 - [ ] Refresh mid-game: best/mute/tutorial flags survive; current board does not need to (session play)
 - [ ] Mute On → background tab → return: no crash; mute preference kept
 - [ ] Airplane / offline: game still playable (no network required for core loop)
-- [ ] Android back (device): tutorial dismisses; otherwise app minimizes (Phase 5)
+- [ ] Android back (device): dismisses tutorial/settings; from play returns to menu
 
 ---
 
@@ -101,3 +101,4 @@ Mark each item: `[ ]` pending · `[x]` pass · `[!]` fail (note bug)
 | Date | Tester | Environment | Result | Notes |
 |------|--------|-------------|--------|-------|
 | 2026-11-16 | Agent | Node unit + Vite build | Automated A pass | Device F blocked (no ANDROID_HOME) |
+| 2026-11-16 | Agent | Mobile CSS + visualViewport | Framing polish | Redeploy Vercel to verify phones |

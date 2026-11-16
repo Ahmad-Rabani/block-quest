@@ -1,5 +1,12 @@
 # Block Quest — Changelog
 
+## 2026-11-16 — Mobile web framing + release prep docs
+
+### Changed
+- Phone / touch browsers use full-bleed canvas (`100dvh`, no card shadow)
+- `visualViewport` resize sync so Phaser FIT tracks mobile browser chrome
+- Android Studio setup steps + screenshot file naming in store docs
+
 ## 2026-11-16 — Pre-game menu hub
 
 ### Added
