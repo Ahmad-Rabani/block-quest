@@ -1,4 +1,5 @@
 import { STORAGE_KEYS } from '../domain/constants';
+import { isRunSnapshot, type RunSnapshot } from '../game/systems/runSnapshot';
 
 export class StorageService {
   getBestScore(): number {
@@ -50,6 +51,35 @@ export class StorageService {
 
   setTutorialSeen(seen: boolean): void {
     this.write(STORAGE_KEYS.tutorialSeen, seen ? '1' : '0');
+  }
+
+  getActiveRun(): RunSnapshot | null {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEYS.activeRun);
+      if (!raw) {
+        return null;
+      }
+      const parsed: unknown = JSON.parse(raw);
+      return isRunSnapshot(parsed) ? parsed : null;
+    } catch {
+      return null;
+    }
+  }
+
+  setActiveRun(snapshot: RunSnapshot): void {
+    try {
+      this.write(STORAGE_KEYS.activeRun, JSON.stringify(snapshot));
+    } catch {
+      // ignore
+    }
+  }
+
+  clearActiveRun(): void {
+    try {
+      localStorage.removeItem(STORAGE_KEYS.activeRun);
+    } catch {
+      // ignore
+    }
   }
 
   private readInt(key: string, fallback: number): number {

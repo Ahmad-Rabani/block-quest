@@ -4,33 +4,33 @@ Prioritized for a commercial mobile puzzle. Do **not** implement everything at o
 
 ## P0 — Fix / polish now (quality)
 
-| Item | Why | Status |
-|------|-----|--------|
-| Tray pieces fit inside slots | Prevents overflow | Done |
-| Clearer mute → Menu/settings | Cleaner header | Done |
-| Real gameplay screenshots | Needed for store | Open |
-| Android device smoke test | Phase 5/8 remaining | Open |
+| Item | Status |
+|------|--------|
+| Tray pieces fit inside slots | Done |
+| Clearer mute → Menu/settings | Done |
+| Real gameplay screenshots | Open |
+| Android device smoke test | Open |
 
 ## P1 — High value, medium effort
 
 | Feature | Status |
 |---------|--------|
-| **Haptic light tick** on place/clear | **Done** (`HapticsService` + Settings toggle) |
-| **Combo / clear banner** | **Done** (`showClearBanner`) |
-| **Settings sheet** (SFX, haptics, how-to, credits) | **Done** (Menu) |
-| **Ghost better + snap assist** near valid cells | Open |
-| **Continue last run** (save board to storage) | Open |
-| **Subtle board “almost full row” hint** | Open |
+| Haptics on place/clear | Done |
+| Combo / clear banner | Done |
+| Settings sheet | Done |
+| Snap assist near valid cells | **Done** |
+| Continue last run | **Done** |
+| Almost-full row/column hints | **Done** |
 
 ## P2 — Retention (evaluate before building)
 
 | Feature | Notes |
 |---------|-------|
-| **Themes** (2–3 palettes) | Deferred from Phase 4 |
-| **Achievements** | Local badges OK |
-| **Weekly leaderboard seed** | Local only first |
-| **Hard mode** | Optional challenge |
-| **Piece rotate** | Test balance carefully |
+| Themes (2–3 palettes) | Deferred from Phase 4 |
+| Achievements | Local badges OK |
+| Weekly leaderboard seed | Local only first |
+| Hard mode | Optional challenge |
+| Piece rotate | Test balance carefully |
 
 ## P3 — Later / needs approval
 
@@ -44,6 +44,5 @@ Prioritized for a commercial mobile puzzle. Do **not** implement everything at o
 
 ## Suggested next build
 
-1. Snap assist + almost-full-line hints  
-2. Continue last run  
-3. Capture store screenshots + Android device QA  
+1. Capture store screenshots + Android device QA  
+2. Or start a P2 item (themes / achievements) if you want more gameplay features  

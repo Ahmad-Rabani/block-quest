@@ -24,7 +24,14 @@ export const STORAGE_KEYS = {
   muted: 'block-quest.muted',
   haptics: 'block-quest.haptics',
   tutorialSeen: 'block-quest.tutorialSeen',
+  activeRun: 'block-quest.activeRun',
 } as const;
+
+/** Snap assist search radius (board cells) while dragging. */
+export const SNAP_ASSIST_RADIUS = 1;
+
+/** Rows/columns with this many empty cells get subtle hints. */
+export const NEAR_COMPLETE_EMPTIES = 1;
 
 export const PALETTE = {
   background: '#F4F2FA',

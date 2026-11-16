@@ -13,6 +13,7 @@ export class BoardView {
   private readonly scene: Phaser.Scene;
   private readonly layout: BoardLayout;
   private readonly cellGraphics: Phaser.GameObjects.Graphics;
+  private readonly hintGraphics: Phaser.GameObjects.Graphics;
   private readonly previewGraphics: Phaser.GameObjects.Graphics;
   private readonly boardBg: Phaser.GameObjects.Graphics;
   private readonly boardShadow: Phaser.GameObjects.Graphics;
@@ -23,7 +24,8 @@ export class BoardView {
     this.boardShadow = scene.add.graphics().setDepth(0);
     this.boardBg = scene.add.graphics().setDepth(1);
     this.cellGraphics = scene.add.graphics().setDepth(2);
-    this.previewGraphics = scene.add.graphics().setDepth(3);
+    this.hintGraphics = scene.add.graphics().setDepth(3);
+    this.previewGraphics = scene.add.graphics().setDepth(4);
     this.drawBackground();
   }
 
@@ -129,6 +131,32 @@ export class BoardView {
 
   clearPreview(): void {
     this.previewGraphics.clear();
+  }
+
+  /** Soft pulse on empty cells that nearly complete a line. */
+  showNearCompleteHints(cells: readonly Coord[]): void {
+    this.hintGraphics.clear();
+    if (cells.length === 0) {
+      return;
+    }
+    const { originX, originY, cellSize, gap } = this.layout;
+    const stride = cellSize + gap;
+    const radius = Math.max(5, cellSize * 0.2);
+    const color = Phaser.Display.Color.HexStringToColor(PALETTE.orange).color;
+
+    this.hintGraphics.fillStyle(color, 0.22);
+    for (const c of cells) {
+      if (c.x < 0 || c.y < 0 || c.x >= BOARD_SIZE || c.y >= BOARD_SIZE) {
+        continue;
+      }
+      const px = originX + c.x * stride;
+      const py = originY + c.y * stride;
+      this.hintGraphics.fillRoundedRect(px, py, cellSize, cellSize, radius);
+    }
+  }
+
+  clearHints(): void {
+    this.hintGraphics.clear();
   }
 
   /** Brief pop on newly placed cells. */

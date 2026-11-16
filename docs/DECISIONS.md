@@ -148,3 +148,10 @@ Record significant decisions here. New chats must read this before changing esta
 - **Decision:** Replace header mute chip with Menu → Settings; persist haptics preference; haptics only fire on native platforms.
 - **Rationale:** Cleaner HUD; Capacitor Haptics is meaningless on desktop web.
 - **Status:** Accepted
+
+## DEC-022 — Snap radius 1 + local continue snapshot
+
+- **Date:** 2026-11-16
+- **Decision:** Snap assist searches 1 cell (Chebyshev). Active runs persist locally; Daily snapshots expire next calendar day; game-over clears the snapshot.
+- **Rationale:** Helps misdrops without feeling sticky; continue is offline-friendly with no accounts.
+- **Status:** Accepted

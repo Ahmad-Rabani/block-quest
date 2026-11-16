@@ -1,35 +1,39 @@
 # Block Quest — Current Status
 
 **Last updated:** 2026-11-16  
-**Current phase:** P1 gameplay polish (settings / haptics / clear banners) shipped; Phase 9 release items still open  
-**Active milestone:** Next P1 leftovers (snap assist, continue run, line hints) or store screenshots / device QA
+**Current phase:** P1 gameplay polish **complete**; Phase 9 release / Phase 8 device QA still open  
+**Active milestone:** Store screenshots + Android device smoke test, or optional P2 features
 
 ## Project state
 
-- Core game + Android shell + store docs in place
-- **Menu** opens Settings (Sound, Haptics, How to Play)
-- Clear banners on multi-line / combo clears
-- Haptics via `@capacitor/haptics` (native only; preference persisted)
-- Unit tests **35/35**
+- Full P1 pack shipped: settings, haptics, clear banners, snap assist, continue run, near-complete hints
+- Unit tests **43/43**
+- Phase 6 iOS deferred; Phase 7 ads blocked without approval
 
-## Completed recently
+## Completed this milestone
 
-- Tray fit fix
-- Settings sheet + haptics + clear banner (this session)
+- Snap assist (`findNearestValidOrigin`, radius 1)
+- Almost-full line hints (orange soft cells)
+- Continue last run (localStorage snapshot + Continue/New Game modal)
+- Tests: `placementAssist.test.ts`, `runSnapshot.test.ts`
 
 ## Incomplete / next
 
-1. Snap assist / almost-full hints / continue last run (remaining P1)
-2. Capture gameplay screenshots
-3. Android Studio device smoke test
-4. Privacy contact + signed AAB when ready
-5. Publish only with explicit approval
+1. Capture gameplay screenshots (`docs/store/SCREENSHOTS.md`)
+2. Android Studio device QA (`docs/QA_CHECKLIST.md` section F)
+3. Privacy contact + signed AAB when ready
+4. Optional P2: themes / achievements / hard mode / rotate
+5. **Publish only after explicit approval**
+
+## How to verify new features
+
+1. Hard-refresh the browser
+2. Drag slightly off a valid cell — preview should snap
+3. Nearly fill a row — empty cell shows soft orange hint
+4. Place a few pieces, refresh — **Continue?** prompt appears
 
 ## Known limitations
 
-- Haptics no-op in browser (expected)
-- Screenshots / device QA still open
-
-## Decisions needed
-
-- Prefer next coding: remaining P1, or release screenshots/QA?
+- Snap radius is 1 cell (intentional, not magnetic across the board)
+- Continue ignores expired Daily runs from a previous calendar day
+- Haptics still no-op on desktop browser

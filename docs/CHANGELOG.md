@@ -1,5 +1,17 @@
 # Block Quest — Changelog
 
+## 2026-11-16 — P1 snap assist, continue run, line hints
+
+### Added
+- Snap assist while dragging (`placementAssist` / radius 1)
+- Almost-full row/column orange hint cells
+- Continue last run via localStorage + Continue/New Game modal
+- Tests for assist + run snapshot round-trip
+
+### Verified
+- `npm test` — 43 passed
+- `npm run build` — success
+
 ## 2026-11-16 — P1 settings, haptics, clear banners
 
 ### Added

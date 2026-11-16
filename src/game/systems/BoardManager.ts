@@ -16,6 +16,7 @@ import {
 } from './PieceGenerator';
 import { LineClearSystem } from './LineClearSystem';
 import { ScoreManager, type ScoreSnapshot } from './ScoreManager';
+import type { RunSnapshot } from './runSnapshot';
 
 export type PlayMode = 'classic' | 'daily';
 
@@ -135,6 +136,57 @@ export class BoardManager {
       isGameOver: entry.isGameOver,
     };
     return true;
+  }
+
+  exportRunSnapshot(): RunSnapshot {
+    return {
+      version: 1,
+      mode: this.mode,
+      dayKey: this.dayKey,
+      board: cloneBoard(this.state.board),
+      tray: this.state.tray.map((slot) => ({
+        available: slot.available,
+        shape: {
+          ...slot.shape,
+          cells: slot.shape.cells.map((c) => ({ ...c })),
+        },
+      })),
+      score: this.scoreManager.getScore(),
+      bestScore: this.scoreManager.getBestScore(),
+      combo: this.scoreManager.getCombo(),
+      undosRemaining: this.undosRemaining,
+      isGameOver: this.state.isGameOver,
+    };
+  }
+
+  restoreRunSnapshot(snapshot: RunSnapshot): void {
+    this.mode = snapshot.mode;
+    this.dayKey = snapshot.dayKey;
+    this.random =
+      snapshot.mode === 'daily' && snapshot.dayKey
+        ? createSeededRandom(dayKeyToSeed(snapshot.dayKey))
+        : Math.random;
+    this.scoreManager.restore({
+      score: snapshot.score,
+      bestScore: snapshot.bestScore,
+      combo: snapshot.combo,
+    });
+    this.undosRemaining = snapshot.undosRemaining;
+    this.history = [];
+    this.state = {
+      board: cloneBoard(snapshot.board),
+      tray: snapshot.tray.map((slot) => ({
+        available: slot.available,
+        shape: {
+          ...slot.shape,
+          cells: slot.shape.cells.map((c) => ({ ...c })),
+        },
+      })),
+      score: snapshot.score,
+      bestScore: snapshot.bestScore,
+      combo: snapshot.combo,
+      isGameOver: snapshot.isGameOver,
+    };
   }
 
   tryPlace(trayIndex: number, originX: number, originY: number): PlacementOutcome {

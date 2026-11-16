@@ -1,9 +1,18 @@
 import Phaser from 'phaser';
-import { PALETTE } from '../../domain/constants';
+import {
+  NEAR_COMPLETE_EMPTIES,
+  PALETTE,
+  SNAP_ASSIST_RADIUS,
+} from '../../domain/constants';
+import {
+  findNearestValidOrigin,
+  findNearCompleteHintCells,
+} from '../../domain/placementAssist';
 import { canPlace, findCompletedLines, pieceCellsAt } from '../../domain/puzzleRules';
 import type { Coord } from '../../domain/types';
 import { BoardManager } from '../systems/BoardManager';
 import { localDayKey } from '../systems/PieceGenerator';
+import { boardHasProgress } from '../systems/runSnapshot';
 import { BoardView } from '../objects/BoardView';
 import { PieceView } from '../objects/PieceView';
 import { AudioService } from '../../services/AudioService';
@@ -31,7 +40,8 @@ export class GameScene extends Phaser.Scene {
   private bestText!: Phaser.GameObjects.Text;
   private undoText!: Phaser.GameObjects.Text;
   private overlay?: Phaser.GameObjects.Container;
-  private overlayKind: 'none' | 'tutorial' | 'gameover' | 'settings' = 'none';
+  private overlayKind: 'none' | 'tutorial' | 'gameover' | 'settings' | 'continue' =
+    'none';
   private trayPanel?: Phaser.GameObjects.Graphics;
   private inputLocked = false;
 
@@ -65,7 +75,8 @@ export class GameScene extends Phaser.Scene {
     this.bindInput();
     this.renderAll();
 
-    if (!this.storage.hasSeenTutorial()) {
+    const resumed = this.tryOfferContinueRun();
+    if (!resumed && !this.storage.hasSeenTutorial()) {
       this.showTutorial();
     }
   }
@@ -77,17 +88,23 @@ export class GameScene extends Phaser.Scene {
   /** @returns true if the back press was consumed by the game UI. */
   private handleAndroidBack(): boolean {
     if (
-      (this.overlayKind === 'tutorial' || this.overlayKind === 'settings') &&
+      (this.overlayKind === 'tutorial' ||
+        this.overlayKind === 'settings' ||
+        this.overlayKind === 'continue') &&
       this.overlay
     ) {
       if (this.overlayKind === 'tutorial') {
         this.storage.setTutorialSeen(true);
       }
+      if (this.overlayKind === 'continue') {
+        // Back = start fresh
+        this.storage.clearActiveRun();
+        this.boardManager.restartClassic(this.storage.getBestScore());
+        this.refreshTray(true);
+        this.renderAll();
+      }
       this.audio.playUi();
-      this.overlay.destroy();
-      this.overlay = undefined;
-      this.overlayKind = 'none';
-      this.inputLocked = false;
+      this.closeOverlay();
       return true;
     }
     // Game-over and empty overlays: let native layer minimize the app.
@@ -192,6 +209,7 @@ export class GameScene extends Phaser.Scene {
         return;
       }
       this.audio.playUi();
+      this.storage.clearActiveRun();
       this.boardManager.restartClassic(this.storage.getBestScore());
       setActive('classic');
       this.refreshTray(true);
@@ -204,6 +222,7 @@ export class GameScene extends Phaser.Scene {
         return;
       }
       this.audio.playUi();
+      this.storage.clearActiveRun();
       const day = localDayKey();
       this.boardManager.restartDaily(this.storage.getDailyBest(day), day);
       setActive('daily');
@@ -477,7 +496,14 @@ export class GameScene extends Phaser.Scene {
     if (!cell) {
       return null;
     }
-    return { x: cell.x - minX, y: cell.y - minY };
+    const rough = { x: cell.x - minX, y: cell.y - minY };
+    const snapped = findNearestValidOrigin(
+      this.boardManager.getBoard(),
+      piece.shape,
+      rough,
+      SNAP_ASSIST_RADIUS,
+    );
+    return snapped ?? rough;
   }
 
   private tryDrop(piece: PieceView): void {
@@ -518,6 +544,7 @@ export class GameScene extends Phaser.Scene {
     this.refreshTray(false);
     this.renderAll();
     this.updateUndoLabel();
+    this.persistActiveRun();
   }
 
   private persistScore(score: number, bestScore: number): void {
@@ -527,6 +554,68 @@ export class GameScene extends Phaser.Scene {
     } else {
       this.storage.setBestScore(bestScore);
     }
+  }
+
+  private persistActiveRun(): void {
+    const snap = this.boardManager.exportRunSnapshot();
+    if (snap.isGameOver) {
+      this.storage.clearActiveRun();
+      return;
+    }
+    this.storage.setActiveRun(snap);
+  }
+
+  /** @returns true if a continue prompt was shown. */
+  private tryOfferContinueRun(): boolean {
+    const snap = this.storage.getActiveRun();
+    if (!snap || snap.isGameOver) {
+      this.storage.clearActiveRun();
+      return false;
+    }
+    if (snap.mode === 'daily' && snap.dayKey !== localDayKey()) {
+      this.storage.clearActiveRun();
+      return false;
+    }
+    if (snap.score <= 0 && !boardHasProgress(snap.board)) {
+      this.storage.clearActiveRun();
+      return false;
+    }
+
+    this.inputLocked = true;
+    this.overlayKind = 'continue';
+    this.overlay = createCenteredModal(this, {
+      title: 'Continue?',
+      subtitle: `Score ${snap.score} · ${snap.mode === 'daily' ? 'Daily' : 'Classic'}`,
+      body: 'A previous run is saved on this device.',
+      depth: 230,
+      buttons: [
+        {
+          label: 'Continue',
+          onClick: () => {
+            this.audio.playUi();
+            this.boardManager.restoreRunSnapshot(snap);
+            this.refreshTray(false);
+            this.renderAll();
+            this.closeOverlay();
+          },
+        },
+        {
+          label: 'New Game',
+          onClick: () => {
+            this.audio.playUi();
+            this.storage.clearActiveRun();
+            this.boardManager.restartClassic(this.storage.getBestScore());
+            this.refreshTray(true);
+            this.renderAll();
+            this.closeOverlay();
+            if (!this.storage.hasSeenTutorial()) {
+              this.showTutorial();
+            }
+          },
+        },
+      ],
+    });
+    return true;
   }
 
   private commitPlacement(piece: PieceView, origin: Coord): void {
@@ -568,6 +657,7 @@ export class GameScene extends Phaser.Scene {
       this.refreshTray(true);
       this.renderAll();
       this.pulseScore();
+      this.persistActiveRun();
 
       if (outcome.breakdown && outcome.breakdown.total > 0 && lines.linesCleared > 0) {
         this.showScoreFloat(outcome.breakdown.total, lines.clearedCells);
@@ -579,6 +669,7 @@ export class GameScene extends Phaser.Scene {
       }
 
       if (outcome.isGameOver) {
+        this.storage.clearActiveRun();
         this.audio.playGameOver();
         void this.haptics.tickMedium();
         this.showGameOver();
@@ -658,6 +749,9 @@ export class GameScene extends Phaser.Scene {
   private renderAll(): void {
     const state = this.boardManager.getState();
     this.boardView.render(state.board);
+    this.boardView.showNearCompleteHints(
+      findNearCompleteHintCells(state.board, NEAR_COMPLETE_EMPTIES),
+    );
     this.scoreText.setText(`Score ${state.score}`);
 
     if (this.boardManager.getMode() === 'daily') {
@@ -777,10 +871,8 @@ export class GameScene extends Phaser.Scene {
           label: 'Play Again',
           onClick: () => {
             this.audio.playUi();
-            this.overlay?.destroy();
-            this.overlay = undefined;
-            this.overlayKind = 'none';
-            this.inputLocked = false;
+            this.storage.clearActiveRun();
+            this.closeOverlay();
             if (mode === 'daily') {
               const day = this.boardManager.getDayKey() ?? localDayKey();
               this.boardManager.restartDaily(this.storage.getDailyBest(day), day);
