@@ -127,3 +127,10 @@ Record significant decisions here. New chats must read this before changing esta
 - **Decision:** Do not create iOS project here. Start Phase 9 icon/splash assets so branding is visible; Phase 8 QA follows; Phase 7 still blocked.
 - **Rationale:** User could not see custom images (none existed); iOS is impossible without macOS.
 - **Status:** Accepted
+
+## DEC-019 — Phase 8 = automated gates + documented manual checklist
+
+- **Date:** 2026-11-16
+- **Decision:** Treat unit/build green as necessary but not sufficient; device/manual rows live in `docs/QA_CHECKLIST.md` and must be signed off before store submit.
+- **Rationale:** This environment lacks Android SDK; QA must survive chat boundaries via files.
+- **Status:** Accepted

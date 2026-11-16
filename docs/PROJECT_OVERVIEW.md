@@ -64,3 +64,4 @@ Ads, analytics, online accounts, unnecessary network requests, store publishing,
 | `docs/DECISIONS.md` | Technical decisions (ADR-style) |
 | `docs/CHANGELOG.md` | Milestone change history |
 | `docs/ANDROID.md` | Capacitor Android setup |
+| `docs/QA_CHECKLIST.md` | Phase 8 manual + device QA checklist |

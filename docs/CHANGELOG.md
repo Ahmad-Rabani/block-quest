@@ -1,5 +1,16 @@
 # Block Quest — Changelog
 
+## 2026-11-16 — Phase 8 QA (automated)
+
+### Added
+- `tests/qa.edgeCases.test.ts` — clear uniqueness, game-over rules, undo caps, storage persistence
+- `docs/QA_CHECKLIST.md` — manual/browser/Android/performance checklist
+
+### Verified
+- `npm test` — 31 passed
+- `npm run build` — success
+- Device matrix — pending (no Android SDK on this machine)
+
 ## 2026-11-16 — Phases guide + brand images
 
 ### Clarified

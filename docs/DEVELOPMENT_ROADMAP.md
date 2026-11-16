@@ -161,9 +161,24 @@ No ads or analytics before approval.
 
 ## PHASE 8 — Quality Assurance
 
-**Status:** Next up (after brand assets)
+**Status:** In progress — automated layer complete; manual/device pending
 
-Rules, edge cases, mobile interaction, sizes, low-end devices, interruptions, persistence, offline.
+### Tasks
+
+- [x] Expand automated edge-case + persistence + undo-limit tests
+- [x] Create permanent `docs/QA_CHECKLIST.md`
+- [x] Verify `npm test` + `npm run build` on this machine
+- [ ] Manual browser checklist (sections B–D) — owner playtest
+- [ ] Multi-size DevTools pass
+- [ ] Android emulator/device checklist (section F) — needs SDK
+- [ ] Interruption / offline device pass
+- [ ] Low-end performance soak
+
+### Acceptance criteria
+
+- [x] Automated rules/persistence tests pass (31+)
+- [x] QA checklist documented for future chats
+- [ ] Manual + device items signed off before store submission
 
 ---
 

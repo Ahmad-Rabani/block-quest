@@ -117,6 +117,9 @@ This is the plain-language map of every development phase.
 
 **Includes:** Rules edge cases, touch, screen sizes, low-end devices, app interruptions, persistence, offline.
 
+**Where to work:** `docs/QA_CHECKLIST.md` + `npm test`.  
+Automated checks can pass while manual/device rows are still open.
+
 ---
 
 ## Phase 9 — Release Preparation
