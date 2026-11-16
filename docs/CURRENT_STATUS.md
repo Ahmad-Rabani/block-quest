@@ -1,21 +1,21 @@
 # Block Quest — Current Status
 
 **Last updated:** 2026-11-16  
-**Current phase:** P1 gameplay polish **complete**; Phase 9 release / Phase 8 device QA still open  
+**Current phase:** Pre-game menu hub shipped; Phase 9 release / Phase 8 device QA still open  
 **Active milestone:** Store screenshots + Android device smoke test, or optional P2 features
 
 ## Project state
 
-- Full P1 pack shipped: settings, haptics, clear banners, snap assist, continue run, near-complete hints
-- Unit tests **43/43**
+- Boot → **MenuScene** (mode select) → GameScene
+- Full P1 pack + menu hub: Classic / Daily / locked Multiplayer, top score, continue from menu
 - Phase 6 iOS deferred; Phase 7 ads blocked without approval
 
 ## Completed this milestone
 
-- Snap assist (`findNearestValidOrigin`, radius 1)
-- Almost-full line hints (orange soft cells)
-- Continue last run (localStorage snapshot + Continue/New Game modal)
-- Tests: `placementAssist.test.ts`, `runSnapshot.test.ts`
+- `MenuScene` pre-game hub with block backdrop, TOP SCORE, Classic / Daily / locked Multiplayer
+- Continue last run offered on the menu (not mid-game popup)
+- In-game Classic/Daily header toggles removed; mode label only
+- Game over → Play Again or Menu; Android back returns to menu
 
 ## Incomplete / next
 
@@ -23,17 +23,18 @@
 2. Android Studio device QA (`docs/QA_CHECKLIST.md` section F)
 3. Privacy contact + signed AAB when ready
 4. Optional P2: themes / achievements / hard mode / rotate
-5. **Publish only after explicit approval**
+5. Multiplayer (currently locked on menu)
+6. **Publish only after explicit approval**
 
 ## How to verify new features
 
-1. Hard-refresh the browser
-2. Drag slightly off a valid cell — preview should snap
-3. Nearly fill a row — empty cell shows soft orange hint
-4. Place a few pieces, refresh — **Continue?** prompt appears
+1. Hard-refresh the browser — menu appears before play
+2. Confirm TOP SCORE + Classic / Daily / locked Multiplayer
+3. Start Classic or Daily from the menu
+4. Place pieces, refresh — **Continue** appears on the menu
 
 ## Known limitations
 
-- Snap radius is 1 cell (intentional, not magnetic across the board)
+- Multiplayer is locked (placeholder only)
 - Continue ignores expired Daily runs from a previous calendar day
 - Haptics still no-op on desktop browser

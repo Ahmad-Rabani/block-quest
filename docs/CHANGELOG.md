@@ -1,5 +1,16 @@
 # Block Quest — Changelog
 
+## 2026-11-16 — Pre-game menu hub
+
+### Added
+- `MenuScene` before play: block-puzzle backdrop, TOP SCORE, Classic / Daily / locked Multiplayer
+- Continue last run as a menu action when a saved run exists
+
+### Changed
+- Boot goes to Menu instead of starting GameScene immediately
+- Removed in-header Classic/Daily toggles; mode shown as a label
+- Game over adds Menu; Android back returns to the menu
+
 ## 2026-11-16 — P1 snap assist, continue run, line hints
 
 ### Added

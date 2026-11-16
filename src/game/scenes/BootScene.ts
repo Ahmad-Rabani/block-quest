@@ -47,7 +47,7 @@ export class BootScene extends Phaser.Scene {
       repeat: 1,
       onComplete: () => {
         subtitle.destroy();
-        this.scene.start('GameScene');
+        this.scene.start('MenuScene');
       },
     });
   }

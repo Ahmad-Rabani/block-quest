@@ -31,11 +31,15 @@ Mark each item: `[ ]` pending · `[x]` pass · `[!]` fail (note bug)
 - [ ] After using all 3 tray pieces, a new set of 3 appears
 - [ ] Undo restores board/tray/score and decrements remaining undos
 - [ ] Cannot undo more than 3 times per run
-- [ ] Classic / Daily mode switch starts a fresh run
+- [ ] App opens to menu (Classic / Daily / locked Multiplayer), not straight into play
+- [ ] TOP SCORE shows on menu; Classic/Daily bests listed
+- [ ] Classic / Daily from menu starts a fresh run
+- [ ] Continue appears on menu when a mid-run save exists
 - [ ] Daily best persists separately from classic best
 - [ ] Best score persists after browser refresh
 - [ ] Mute persists after refresh
 - [ ] Tutorial shows once, then stays dismissed
+- [ ] Game over Menu returns to the pre-game hub
 
 ---
 

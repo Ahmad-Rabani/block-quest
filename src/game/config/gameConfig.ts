@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { PALETTE } from '../../domain/constants';
 import { BootScene } from '../scenes/BootScene';
+import { MenuScene } from '../scenes/MenuScene';
 import { GameScene } from '../scenes/GameScene';
 
 /** Logical portrait design size — scaled by Phaser Scale Manager. */
@@ -14,7 +15,7 @@ export function createGameConfig(parent: string | HTMLElement): Phaser.Types.Cor
     backgroundColor: PALETTE.background,
     width: DESIGN_WIDTH,
     height: DESIGN_HEIGHT,
-    scene: [BootScene, GameScene],
+    scene: [BootScene, MenuScene, GameScene],
     scale: {
       mode: Phaser.Scale.FIT,
       autoCenter: Phaser.Scale.CENTER_BOTH,

@@ -19,8 +19,9 @@ Prioritized for a commercial mobile puzzle. Do **not** implement everything at o
 | Combo / clear banner | Done |
 | Settings sheet | Done |
 | Snap assist near valid cells | **Done** |
-| Continue last run | **Done** |
+| Continue last run | **Done** (menu Continue) |
 | Almost-full row/column hints | **Done** |
+| Pre-game menu (Classic / Daily / MP locked) | **Done** |
 
 ## P2 — Retention (evaluate before building)
 
@@ -31,6 +32,7 @@ Prioritized for a commercial mobile puzzle. Do **not** implement everything at o
 | Weekly leaderboard seed | Local only first |
 | Hard mode | Optional challenge |
 | Piece rotate | Test balance carefully |
+| Multiplayer | Locked placeholder on menu |
 
 ## P3 — Later / needs approval
 

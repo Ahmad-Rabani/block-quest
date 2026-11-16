@@ -10,9 +10,8 @@ import {
 } from '../../domain/placementAssist';
 import { canPlace, findCompletedLines, pieceCellsAt } from '../../domain/puzzleRules';
 import type { Coord } from '../../domain/types';
-import { BoardManager } from '../systems/BoardManager';
+import { BoardManager, type PlayMode } from '../systems/BoardManager';
 import { localDayKey } from '../systems/PieceGenerator';
-import { boardHasProgress } from '../systems/runSnapshot';
 import { BoardView } from '../objects/BoardView';
 import { PieceView } from '../objects/PieceView';
 import { AudioService } from '../../services/AudioService';
@@ -24,6 +23,7 @@ import { computeBoardMetrics, computeTrayLayout, LAYOUT } from '../ui/layout';
 import { fitTrayCellSize } from '../ui/trayFit';
 import { showClearBanner } from '../ui/ClearBanner';
 import { createCenteredModal } from '../ui/ModalFactory';
+import type { GameStartData } from './MenuScene';
 
 const DRAG_LIFT_Y = 92;
 const DRAG_THRESHOLD = 8;
@@ -40,10 +40,10 @@ export class GameScene extends Phaser.Scene {
   private bestText!: Phaser.GameObjects.Text;
   private undoText!: Phaser.GameObjects.Text;
   private overlay?: Phaser.GameObjects.Container;
-  private overlayKind: 'none' | 'tutorial' | 'gameover' | 'settings' | 'continue' =
-    'none';
+  private overlayKind: 'none' | 'tutorial' | 'gameover' | 'settings' = 'none';
   private trayPanel?: Phaser.GameObjects.Graphics;
   private inputLocked = false;
+  private startMode: PlayMode = 'classic';
 
   private activePiece: PieceView | null = null;
   private dragPointerId: number | null = null;
@@ -53,6 +53,13 @@ export class GameScene extends Phaser.Scene {
   constructor() {
     super('GameScene');
   }
+
+  init(data: GameStartData): void {
+    this.startMode = data?.mode === 'daily' ? 'daily' : 'classic';
+    this.pendingContinue = Boolean(data?.continueRun);
+  }
+
+  private pendingContinue = false;
 
   create(): void {
     this.cameras.main.setBackgroundColor(PALETTE.background);
@@ -64,9 +71,28 @@ export class GameScene extends Phaser.Scene {
 
     this.drawBackdrop();
 
-    const best = this.storage.getBestScore();
-    this.boardManager = new BoardManager(best);
-    this.boardManager.restartClassic(best);
+    const classicBest = this.storage.getBestScore();
+    const day = localDayKey();
+    this.boardManager = new BoardManager(
+      this.startMode === 'daily' ? this.storage.getDailyBest(day) : classicBest,
+    );
+
+    if (this.pendingContinue) {
+      const snap = this.storage.getActiveRun();
+      if (snap) {
+        this.boardManager.restoreRunSnapshot(snap);
+        this.startMode = snap.mode;
+      } else if (this.startMode === 'daily') {
+        this.boardManager.restartDaily(this.storage.getDailyBest(day), day);
+      } else {
+        this.boardManager.restartClassic(classicBest);
+      }
+    } else if (this.startMode === 'daily') {
+      this.boardManager.restartDaily(this.storage.getDailyBest(day), day);
+    } else {
+      this.boardManager.restartClassic(classicBest);
+    }
+    this.pendingContinue = false;
 
     this.createHeader();
     this.createBoard();
@@ -75,8 +101,7 @@ export class GameScene extends Phaser.Scene {
     this.bindInput();
     this.renderAll();
 
-    const resumed = this.tryOfferContinueRun();
-    if (!resumed && !this.storage.hasSeenTutorial()) {
+    if (!this.storage.hasSeenTutorial()) {
       this.showTutorial();
     }
   }
@@ -87,28 +112,19 @@ export class GameScene extends Phaser.Scene {
 
   /** @returns true if the back press was consumed by the game UI. */
   private handleAndroidBack(): boolean {
-    if (
-      (this.overlayKind === 'tutorial' ||
-        this.overlayKind === 'settings' ||
-        this.overlayKind === 'continue') &&
-      this.overlay
-    ) {
+    if ((this.overlayKind === 'tutorial' || this.overlayKind === 'settings') && this.overlay) {
       if (this.overlayKind === 'tutorial') {
         this.storage.setTutorialSeen(true);
-      }
-      if (this.overlayKind === 'continue') {
-        // Back = start fresh
-        this.storage.clearActiveRun();
-        this.boardManager.restartClassic(this.storage.getBestScore());
-        this.refreshTray(true);
-        this.renderAll();
       }
       this.audio.playUi();
       this.closeOverlay();
       return true;
     }
-    // Game-over and empty overlays: let native layer minimize the app.
-    return false;
+    // From gameplay, back returns to the main menu.
+    this.persistActiveRun();
+    this.audio.playUi();
+    this.scene.start('MenuScene');
+    return true;
   }
 
   private drawBackdrop(): void {
@@ -170,66 +186,23 @@ export class GameScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(6);
 
-    this.createModeControls();
+    this.add
+      .text(
+        DESIGN_WIDTH / 2,
+        LAYOUT.chipY,
+        this.boardManager.getMode() === 'daily' ? 'Daily' : 'Classic',
+        {
+          fontFamily: 'Segoe UI, system-ui, sans-serif',
+          fontSize: '13px',
+          fontStyle: 'bold',
+          color: PALETTE.primaryPurple,
+        },
+      )
+      .setOrigin(0.5)
+      .setDepth(7);
+
     this.createUndoButton();
     this.createSettingsButton();
-  }
-
-  private createModeControls(): void {
-    const y = LAYOUT.chipY;
-    const classic = this.add
-      .text(DESIGN_WIDTH / 2 - 36, y, 'Classic', {
-        fontFamily: 'Segoe UI, system-ui, sans-serif',
-        fontSize: '12px',
-        fontStyle: 'bold',
-        color: PALETTE.primaryPurple,
-      })
-      .setOrigin(0.5)
-      .setDepth(7)
-      .setInteractive({ useHandCursor: true });
-
-    const daily = this.add
-      .text(DESIGN_WIDTH / 2 + 36, y, 'Daily', {
-        fontFamily: 'Segoe UI, system-ui, sans-serif',
-        fontSize: '12px',
-        fontStyle: 'bold',
-        color: '#7A7499',
-      })
-      .setOrigin(0.5)
-      .setDepth(7)
-      .setInteractive({ useHandCursor: true });
-
-    const setActive = (mode: 'classic' | 'daily'): void => {
-      classic.setColor(mode === 'classic' ? PALETTE.primaryPurple : '#7A7499');
-      daily.setColor(mode === 'daily' ? PALETTE.primaryPurple : '#7A7499');
-    };
-
-    classic.on('pointerup', () => {
-      if (this.inputLocked || this.overlay) {
-        return;
-      }
-      this.audio.playUi();
-      this.storage.clearActiveRun();
-      this.boardManager.restartClassic(this.storage.getBestScore());
-      setActive('classic');
-      this.refreshTray(true);
-      this.renderAll();
-      this.updateUndoLabel();
-    });
-
-    daily.on('pointerup', () => {
-      if (this.inputLocked || this.overlay) {
-        return;
-      }
-      this.audio.playUi();
-      this.storage.clearActiveRun();
-      const day = localDayKey();
-      this.boardManager.restartDaily(this.storage.getDailyBest(day), day);
-      setActive('daily');
-      this.refreshTray(true);
-      this.renderAll();
-      this.updateUndoLabel();
-    });
   }
 
   private createUndoButton(): void {
@@ -565,59 +538,6 @@ export class GameScene extends Phaser.Scene {
     this.storage.setActiveRun(snap);
   }
 
-  /** @returns true if a continue prompt was shown. */
-  private tryOfferContinueRun(): boolean {
-    const snap = this.storage.getActiveRun();
-    if (!snap || snap.isGameOver) {
-      this.storage.clearActiveRun();
-      return false;
-    }
-    if (snap.mode === 'daily' && snap.dayKey !== localDayKey()) {
-      this.storage.clearActiveRun();
-      return false;
-    }
-    if (snap.score <= 0 && !boardHasProgress(snap.board)) {
-      this.storage.clearActiveRun();
-      return false;
-    }
-
-    this.inputLocked = true;
-    this.overlayKind = 'continue';
-    this.overlay = createCenteredModal(this, {
-      title: 'Continue?',
-      subtitle: `Score ${snap.score} · ${snap.mode === 'daily' ? 'Daily' : 'Classic'}`,
-      body: 'A previous run is saved on this device.',
-      depth: 230,
-      buttons: [
-        {
-          label: 'Continue',
-          onClick: () => {
-            this.audio.playUi();
-            this.boardManager.restoreRunSnapshot(snap);
-            this.refreshTray(false);
-            this.renderAll();
-            this.closeOverlay();
-          },
-        },
-        {
-          label: 'New Game',
-          onClick: () => {
-            this.audio.playUi();
-            this.storage.clearActiveRun();
-            this.boardManager.restartClassic(this.storage.getBestScore());
-            this.refreshTray(true);
-            this.renderAll();
-            this.closeOverlay();
-            if (!this.storage.hasSeenTutorial()) {
-              this.showTutorial();
-            }
-          },
-        },
-      ],
-    });
-    return true;
-  }
-
   private commitPlacement(piece: PieceView, origin: Coord): void {
     const before = this.boardManager.getBoard();
     const previewCells = pieceCellsAt({
@@ -881,6 +801,15 @@ export class GameScene extends Phaser.Scene {
             }
             this.refreshTray(true);
             this.renderAll();
+          },
+        },
+        {
+          label: 'Menu',
+          onClick: () => {
+            this.audio.playUi();
+            this.storage.clearActiveRun();
+            this.closeOverlay();
+            this.scene.start('MenuScene');
           },
         },
       ],
