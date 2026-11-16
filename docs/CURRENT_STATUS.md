@@ -1,39 +1,39 @@
 # Block Quest — Current Status
 
 **Last updated:** 2026-11-16  
-**Current phase:** Phase 3 — Gameplay UX and Polish (**complete** for planned scope)  
-**Active milestone:** Await approval before Phase 4 evaluation (or Phase 5 Android)
+**Current phase:** Phase 4 — Progression and Retention (**partial — evaluated slice shipped**)  
+**Active milestone:** Await approval for Phase 5 Android, or further Phase 4 features
 
 ## Project state
 
-- Playable browser game with polished feedback: animations, procedural SFX + mute, first-run tutorial, safer multi-size framing.
-- Domain rules remain Phaser-free; 17 unit tests passing.
+- Playable browser game with Phase 3 polish plus Phase 4 retention slice.
+- UI alignment fixed: shared layout grid for board/tray; centered modal factory.
+- Classic + Daily modes, Undo (3/run), daily best persistence.
+- Domain remains Phaser-free; **20** unit tests passing.
 
 ## Completed
 
-### Phases 0–2
-- Foundation, core engine, playable MVP (see prior changelog entries)
+### Phases 0–3
+- Foundation, engine, playable MVP, UX polish (see changelog)
 
-### Phase 3 — UX and polish
-- Tray picking + UI chrome (earlier)
-- Placement pop + line-clear shrink/fade + score floaters
-- Procedural Web Audio SFX (`AudioService`) + mute toggle (persisted)
-- First-run onboarding tutorial (persisted)
-- Safe-area CSS, FIT scale mins, roundPixels / short-screen canvas framing
+### Phase 4 (evaluated slice)
+- **Shipped:** optional Undo (3 per run), Daily Challenge (seeded PRNG + daily best)
+- **UI fix:** modal centering via `ModalFactory`; tray/board share `LAYOUT` margins/slot centering
+- **Deferred (assessed lower priority / higher cost for now):** themes, special blocks, full achievements tree
 
 ## Incomplete / next
 
-1. **Next task:** Phase 4 — evaluate progression/retention features (do not implement blindly)
-2. Or jump to Phase 5 Android (Capacitor) if preferred
-3. Exhaustive multi-device QA remains under Phase 8
-4. Do **not** start ads/analytics without Phase 7 approval
+1. **Next task:** Phase 5 — Android / Capacitor integration (if approved)
+2. Optional Phase 4 follow-ups: themes, achievements, special blocks
+3. Exhaustive device QA → Phase 8
+4. No ads/analytics without Phase 7 approval
 
 ## Known bugs / limitations
 
-- SFX are procedural beeps (no authored audio pack yet)
-- Tutorial is a single panel (not multi-step interactive coach marks)
-- Physical-device matrix not exhaustively tested
+- Daily challenge is local-only (no global leaderboard)
+- Undo count is fixed at 3 per run
+- Themes / special blocks not implemented
 
 ## Blockers / decisions needed
 
-- Approve Phase 4 feature evaluation vs skip to Android (Phase 5)
+- Confirm whether to proceed to **Phase 5 Android** or continue Phase 4 extras

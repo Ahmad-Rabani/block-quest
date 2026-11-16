@@ -92,3 +92,17 @@ Record significant decisions here. New chats must read this before changing esta
 - **Decision:** Show a one-time “How to Play” overlay; store `tutorialSeen`. No interactive coach marks in Phase 3.
 - **Rationale:** Fast onboarding without blocking core play loop development.
 - **Status:** Accepted
+
+## DEC-014 — Phase 4 ships Undo + Daily first
+
+- **Date:** 2026-11-16
+- **Decision:** Implement Undo (3/run) and local Daily Challenge; defer themes, special blocks, and achievements.
+- **Rationale:** Highest retention value per complexity; keeps domain testable; avoids scope explosion before Android.
+- **Status:** Accepted
+
+## DEC-015 — Shared layout + modal factory
+
+- **Date:** 2026-11-16
+- **Decision:** Board/tray use `src/game/ui/layout.ts`; overlays use `ModalFactory` for centered stacking.
+- **Rationale:** Fixes drift between tray panel vs piece slots and uneven modal text/button alignment.
+- **Status:** Accepted

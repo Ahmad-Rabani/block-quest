@@ -12,6 +12,21 @@ export class StorageService {
     this.write(STORAGE_KEYS.bestScore, String(Math.floor(score)));
   }
 
+  getDailyBest(dayKey: string): number {
+    return this.readInt(`${STORAGE_KEYS.dailyBestPrefix}${dayKey}`, 0);
+  }
+
+  setDailyBest(dayKey: string, score: number): void {
+    if (!Number.isFinite(score) || score < 0) {
+      return;
+    }
+    const key = `${STORAGE_KEYS.dailyBestPrefix}${dayKey}`;
+    const prev = this.getDailyBest(dayKey);
+    if (score > prev) {
+      this.write(key, String(Math.floor(score)));
+    }
+  }
+
   isMuted(): boolean {
     return this.readBool(STORAGE_KEYS.muted, false);
   }

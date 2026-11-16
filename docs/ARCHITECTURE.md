@@ -30,6 +30,7 @@ Domain rules must be callable from Vitest without a browser or Phaser.
 | `scenes/` | BootScene, GameScene |
 | `systems/` | Orchestration wrapping domain: BoardManager, PieceGenerator, MoveValidator, LineClearSystem, ScoreManager |
 | `objects/` | PieceView, BoardView — Phaser display objects |
+| `ui/` | Shared layout metrics + centered modal factory |
 
 Systems may call domain functions. Views must not contain game-rule logic.
 
@@ -37,7 +38,8 @@ Systems may call domain functions. Views must not contain game-rule logic.
 
 | File | Responsibility |
 |------|----------------|
-| `StorageService.ts` | Best-score persistence via localStorage (browser / Capacitor WebView) |
+| `StorageService.ts` | Best score, daily best, mute, tutorial flags via localStorage |
+| `AudioService.ts` | Procedural SFX + mute |
 
 ## Data Flow (Placement)
 

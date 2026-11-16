@@ -94,9 +94,28 @@ Phases must be completed against acceptance criteria. Do not mark complete witho
 
 ## PHASE 4 — Progression and Retention
 
-**Status:** Not started (evaluate before implementing)
+**Status:** Partial complete (evaluated slice)
 
-Daily challenge, themes, special blocks, optional undo, achievements, progression — assess value/complexity first.
+### Evaluation (2026-11-16)
+
+| Feature | Value | Complexity | Decision |
+|---------|-------|------------|----------|
+| Optional undo | High | Medium | **Ship now** (3/run) |
+| Daily challenge | High | Medium | **Ship now** (seeded local) |
+| Themes | Medium | Medium | Defer |
+| Achievements | Medium | Medium | Defer |
+| Special blocks | Medium-High | High | Defer |
+| Deep progression meta | Medium | High | Defer |
+
+### Tasks
+
+- [x] Evaluate feature list for value/complexity
+- [x] Implement optional Undo
+- [x] Implement Daily Challenge (date-seeded trays + daily best)
+- [x] Fix modal + tray alignment (shared layout + modal factory)
+- [ ] Themes (deferred)
+- [ ] Achievements (deferred)
+- [ ] Special block abilities (deferred)
 
 ---
 

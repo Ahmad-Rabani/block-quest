@@ -1,6 +1,12 @@
 import { scorePlacement } from '../../domain/puzzleRules';
 import type { ScoreBreakdown } from '../../domain/types';
 
+export interface ScoreSnapshot {
+  score: number;
+  bestScore: number;
+  combo: number;
+}
+
 export class ScoreManager {
   private score = 0;
   private bestScore = 0;
@@ -20,6 +26,20 @@ export class ScoreManager {
 
   getCombo(): number {
     return this.combo;
+  }
+
+  snapshot(): ScoreSnapshot {
+    return {
+      score: this.score,
+      bestScore: this.bestScore,
+      combo: this.combo,
+    };
+  }
+
+  restore(snapshot: ScoreSnapshot): void {
+    this.score = snapshot.score;
+    this.bestScore = snapshot.bestScore;
+    this.combo = snapshot.combo;
   }
 
   reset(bestScore?: number): void {

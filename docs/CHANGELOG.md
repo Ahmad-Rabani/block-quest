@@ -1,5 +1,20 @@
 # Block Quest — Changelog
 
+## 2026-11-16 — Phase 4 slice + UI alignment
+
+### Fixed
+- Modal content/button vertical centering via shared `ModalFactory`
+- Board/tray/slot alignment via shared `LAYOUT` (same side margins; slots vertically centered)
+
+### Added
+- Undo (3 per run) with history restore
+- Classic / Daily mode toggle; seeded daily trays; daily best persistence
+- Tests for seeded trays + undo (`tests/undoAndDaily.test.ts`)
+
+### Verified
+- `npm test` — 20 passed
+- `npm run build` — success
+
 ## 2026-11-16 — Phase 3 UX polish
 
 ### Added
