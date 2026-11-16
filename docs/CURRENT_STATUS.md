@@ -1,42 +1,35 @@
 # Block Quest — Current Status
 
 **Last updated:** 2026-11-16  
-**Current phase:** Phase 9 — Release Preparation (**docs + brand/store graphics ready; no publish**)  
-**Active milestone:** Capture real gameplay screenshots; complete Phase 8 device QA; await approval before any store upload
+**Current phase:** P1 gameplay polish (settings / haptics / clear banners) shipped; Phase 9 release items still open  
+**Active milestone:** Next P1 leftovers (snap assist, continue run, line hints) or store screenshots / device QA
 
 ## Project state
 
-- Phases 0–5 + Phase 8 automated QA in place
-- Phase 6 iOS deferred (macOS); Phase 7 ads blocked
-- Phase 9 store package drafted under `docs/store/` + `assets/store/`
-- Unit tests **31/31**; build green
+- Core game + Android shell + store docs in place
+- **Menu** opens Settings (Sound, Haptics, How to Play)
+- Clear banners on multi-line / combo clears
+- Haptics via `@capacitor/haptics` (native only; preference persisted)
+- Unit tests **35/35**
 
-## Completed (Phase 9 this milestone)
+## Completed recently
 
-- Store listing draft (`docs/store/STORE_LISTING.md`)
-- Privacy policy draft (`docs/store/PRIVACY.md`)
-- Screenshot capture guide (`docs/store/SCREENSHOTS.md`)
-- Release build instructions (`docs/store/RELEASE_BUILDS.md`)
-- Submission checklist (`docs/store/SUBMISSION_CHECKLIST.md`)
-- Play feature graphic `assets/store/feature-graphic-1024x500.png`
-- Screenshot folder placeholder `assets/store/screenshots/android/`
+- Tray fit fix
+- Settings sheet + haptics + clear banner (this session)
 
 ## Incomplete / next
 
-1. Capture real gameplay screenshots into `assets/store/screenshots/android/`
-2. Finish Phase 8 manual + Android device checklist
-3. Replace privacy contact placeholders
-4. Build signed AAB when Android SDK/keystore available
-5. **Publish only after your explicit approval**
+1. Snap assist / almost-full hints / continue last run (remaining P1)
+2. Capture gameplay screenshots
+3. Android Studio device smoke test
+4. Privacy contact + signed AAB when ready
+5. Publish only with explicit approval
 
-## Known bugs / limitations
+## Known limitations
 
-- Gameplay screenshots not yet captured from a live session
-- No Android SDK here → no release AAB produced
-- Privacy contact still placeholder email
-- Tray overflow for long pieces — **fixed** via `fitTrayCellSize` (refresh browser)
+- Haptics no-op in browser (expected)
+- Screenshots / device QA still open
 
-## Blockers / decisions needed
+## Decisions needed
 
-- Approve store submission when checklists are green
-- Approve Phase 7 if/when ads or analytics are desired
+- Prefer next coding: remaining P1, or release screenshots/QA?

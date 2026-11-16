@@ -1,5 +1,21 @@
 # Block Quest — Changelog
 
+## 2026-11-16 — P1 settings, haptics, clear banners
+
+### Added
+- Settings sheet via **Menu** (Sound, Haptics, How to Play, credits)
+- `HapticsService` + `@capacitor/haptics` (persisted preference)
+- Clear/combo banner (`Nice clear!` / `Double clear!` / combo text)
+- Tests for banner copy
+
+### Changed
+- Header mute chip replaced by Menu → Settings
+
+### Verified
+- `npm test` — 35 passed
+- `npm run build` — success
+- `npx cap sync android` — includes Haptics plugin
+
 ## 2026-11-16 — Tray overflow UI fix + feature backlog
 
 ### Fixed

@@ -141,3 +141,10 @@ Record significant decisions here. New chats must read this before changing esta
 - **Decision:** Produce listing/privacy/release docs and marketing graphics in-repo; require explicit owner approval before any store upload.
 - **Rationale:** Matches project hard prohibitions; keeps commercial release under human control.
 - **Status:** Accepted
+
+## DEC-021 — Settings sheet owns SFX + haptics
+
+- **Date:** 2026-11-16
+- **Decision:** Replace header mute chip with Menu → Settings; persist haptics preference; haptics only fire on native platforms.
+- **Rationale:** Cleaner HUD; Capacitor Haptics is meaningless on desktop web.
+- **Status:** Accepted

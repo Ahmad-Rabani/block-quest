@@ -4,33 +4,33 @@ Prioritized for a commercial mobile puzzle. Do **not** implement everything at o
 
 ## P0 — Fix / polish now (quality)
 
-| Item | Why |
-|------|-----|
-| Tray pieces fit inside slots | Prevents overflow (long I-pieces); done this session |
-| Real gameplay screenshots | Needed for store |
-| Android device smoke test | Phase 5/8 remaining |
-| Clearer mute control label | SFX / Mute (done this session) |
+| Item | Why | Status |
+|------|-----|--------|
+| Tray pieces fit inside slots | Prevents overflow | Done |
+| Clearer mute → Menu/settings | Cleaner header | Done |
+| Real gameplay screenshots | Needed for store | Open |
+| Android device smoke test | Phase 5/8 remaining | Open |
 
-## P1 — High value, medium effort (next product wins)
+## P1 — High value, medium effort
 
-| Feature | Why players care |
-|---------|------------------|
-| **Haptic light tick** on place/clear (Capacitor Haptics) | Feels premium on phone |
-| **Combo / clear banner** (“Double clear!”) | Makes scoring readable |
-| **Ghost better + snap assist** near valid cells | Fewer misdrops |
-| **Settings sheet** (SFX, haptics, how-to, credits) | Cleaner than header clutter |
-| **Continue last run** (save board to storage) | Retention without accounts |
-| **Subtle board “almost full row” hint** | Helps new players |
+| Feature | Status |
+|---------|--------|
+| **Haptic light tick** on place/clear | **Done** (`HapticsService` + Settings toggle) |
+| **Combo / clear banner** | **Done** (`showClearBanner`) |
+| **Settings sheet** (SFX, haptics, how-to, credits) | **Done** (Menu) |
+| **Ghost better + snap assist** near valid cells | Open |
+| **Continue last run** (save board to storage) | Open |
+| **Subtle board “almost full row” hint** | Open |
 
 ## P2 — Retention (evaluate before building)
 
 | Feature | Notes |
 |---------|-------|
-| **Themes** (2–3 palettes) | Deferred from Phase 4; low risk cosmetic |
-| **Achievements** (first clear, score milestones) | Local badges OK |
-| **Weekly leaderboard seed** (local only first) | Avoid accounts initially |
-| **Hard mode** (larger pieces / no undo) | Optional challenge |
-| **Piece rotate** (tap to rotate) | Fun but changes balance — test carefully |
+| **Themes** (2–3 palettes) | Deferred from Phase 4 |
+| **Achievements** | Local badges OK |
+| **Weekly leaderboard seed** | Local only first |
+| **Hard mode** | Optional challenge |
+| **Piece rotate** | Test balance carefully |
 
 ## P3 — Later / needs approval
 
@@ -38,21 +38,12 @@ Prioritized for a commercial mobile puzzle. Do **not** implement everything at o
 |---------|-------|
 | Special blocks / power-ups | High design cost |
 | Cloud sync / accounts | Privacy + backend |
-| Ads / rewarded undo refill | **Phase 7 — your approval required** |
-| Analytics | **Phase 7 — your approval required** |
+| Ads / rewarded undo refill | Phase 7 approval |
+| Analytics | Phase 7 approval |
 | iOS build | Phase 6 on macOS |
 
-## Explicitly avoid for now
+## Suggested next build
 
-- Cloning another game’s exact UI/art
-- Crowding the first screen with stats/promos
-- Interrupting active drag with ads
-- Adding libraries without a clear need
-
-## Suggested next build (one milestone)
-
-1. Settings sheet + haptics  
-2. Combo clear banner  
-3. Capture store screenshots  
-
-Ask which of these you want implemented next.
+1. Snap assist + almost-full-line hints  
+2. Continue last run  
+3. Capture store screenshots + Android device QA  

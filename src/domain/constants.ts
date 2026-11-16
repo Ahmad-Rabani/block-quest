@@ -22,6 +22,7 @@ export const STORAGE_KEYS = {
   bestScore: 'block-quest.bestScore',
   dailyBestPrefix: 'block-quest.dailyBest.',
   muted: 'block-quest.muted',
+  haptics: 'block-quest.haptics',
   tutorialSeen: 'block-quest.tutorialSeen',
 } as const;
 

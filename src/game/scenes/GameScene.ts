@@ -7,11 +7,13 @@ import { localDayKey } from '../systems/PieceGenerator';
 import { BoardView } from '../objects/BoardView';
 import { PieceView } from '../objects/PieceView';
 import { AudioService } from '../../services/AudioService';
+import { HapticsService } from '../../services/HapticsService';
 import { NativeLifecycleService } from '../../services/NativeLifecycleService';
 import { StorageService } from '../../services/StorageService';
 import { DESIGN_WIDTH } from '../config/gameConfig';
 import { computeBoardMetrics, computeTrayLayout, LAYOUT } from '../ui/layout';
 import { fitTrayCellSize } from '../ui/trayFit';
+import { showClearBanner } from '../ui/ClearBanner';
 import { createCenteredModal } from '../ui/ModalFactory';
 
 const DRAG_LIFT_Y = 92;
@@ -20,6 +22,7 @@ const DRAG_THRESHOLD = 8;
 export class GameScene extends Phaser.Scene {
   private storage = new StorageService();
   private audio!: AudioService;
+  private haptics!: HapticsService;
   private nativeLifecycle!: NativeLifecycleService;
   private boardManager!: BoardManager;
   private boardView!: BoardView;
@@ -27,9 +30,8 @@ export class GameScene extends Phaser.Scene {
   private scoreText!: Phaser.GameObjects.Text;
   private bestText!: Phaser.GameObjects.Text;
   private undoText!: Phaser.GameObjects.Text;
-  private muteLabel!: Phaser.GameObjects.Text;
   private overlay?: Phaser.GameObjects.Container;
-  private overlayKind: 'none' | 'tutorial' | 'gameover' = 'none';
+  private overlayKind: 'none' | 'tutorial' | 'gameover' | 'settings' = 'none';
   private trayPanel?: Phaser.GameObjects.Graphics;
   private inputLocked = false;
 
@@ -45,6 +47,7 @@ export class GameScene extends Phaser.Scene {
   create(): void {
     this.cameras.main.setBackgroundColor(PALETTE.background);
     this.audio = new AudioService(this.storage.isMuted());
+    this.haptics = new HapticsService(this.storage.isHapticsEnabled());
     this.nativeLifecycle = new NativeLifecycleService(this.audio);
     void this.nativeLifecycle.start();
     this.nativeLifecycle.setBackButtonHandler(() => this.handleAndroidBack());
@@ -73,8 +76,13 @@ export class GameScene extends Phaser.Scene {
 
   /** @returns true if the back press was consumed by the game UI. */
   private handleAndroidBack(): boolean {
-    if (this.overlayKind === 'tutorial' && this.overlay) {
-      this.storage.setTutorialSeen(true);
+    if (
+      (this.overlayKind === 'tutorial' || this.overlayKind === 'settings') &&
+      this.overlay
+    ) {
+      if (this.overlayKind === 'tutorial') {
+        this.storage.setTutorialSeen(true);
+      }
       this.audio.playUi();
       this.overlay.destroy();
       this.overlay = undefined;
@@ -147,7 +155,7 @@ export class GameScene extends Phaser.Scene {
 
     this.createModeControls();
     this.createUndoButton();
-    this.createMuteButton();
+    this.createSettingsButton();
   }
 
   private createModeControls(): void {
@@ -228,20 +236,23 @@ export class GameScene extends Phaser.Scene {
     bg.on('pointerup', () => this.handleUndo());
   }
 
-  private createMuteButton(): void {
-    const bx = DESIGN_WIDTH - LAYOUT.screenMargin - 16;
+  private createSettingsButton(): void {
+    const bx = DESIGN_WIDTH - LAYOUT.screenMargin - 18;
     const by = LAYOUT.titleY;
     const bg = this.add.graphics().setDepth(8);
     bg.fillStyle(Phaser.Display.Color.HexStringToColor(PALETTE.white).color, 1);
-    bg.fillCircle(bx, by, 15);
-    bg.fillStyle(0x6545d6, 0.1);
-    bg.fillCircle(bx, by, 15);
-    bg.setInteractive(new Phaser.Geom.Circle(bx, by, 17), Phaser.Geom.Circle.Contains);
+    bg.fillRoundedRect(bx - 28, by - 14, 56, 28, 14);
+    bg.fillStyle(0x6545d6, 0.08);
+    bg.fillRoundedRect(bx - 28, by - 14, 56, 28, 14);
+    bg.setInteractive(
+      new Phaser.Geom.Rectangle(bx - 28, by - 14, 56, 28),
+      Phaser.Geom.Rectangle.Contains,
+    );
 
-    this.muteLabel = this.add
-      .text(bx, by, this.audio.isMuted() ? 'Mute' : 'SFX', {
+    this.add
+      .text(bx, by, 'Menu', {
         fontFamily: 'Segoe UI, system-ui, sans-serif',
-        fontSize: '10px',
+        fontSize: '12px',
         fontStyle: 'bold',
         color: PALETTE.primaryPurple,
       })
@@ -249,16 +260,10 @@ export class GameScene extends Phaser.Scene {
       .setDepth(9);
 
     bg.on('pointerup', () => {
-      if (this.inputLocked) {
+      if (this.inputLocked || this.overlay || this.isDragging) {
         return;
       }
-      const next = !this.audio.isMuted();
-      this.audio.setMuted(next);
-      this.storage.setMuted(next);
-      this.muteLabel.setText(next ? 'Mute' : 'SFX');
-      if (!next) {
-        this.audio.playUi();
-      }
+      this.showSettings();
     });
   }
 
@@ -494,6 +499,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     this.audio.playInvalid();
+    void this.haptics.tickLight();
     piece.returnHome(true);
   }
 
@@ -503,9 +509,11 @@ export class GameScene extends Phaser.Scene {
     }
     if (!this.boardManager.canUndo()) {
       this.audio.playInvalid();
+      void this.haptics.tickLight();
       return;
     }
     this.audio.playUi();
+    void this.haptics.tickLight();
     this.boardManager.undo();
     this.refreshTray(false);
     this.renderAll();
@@ -537,6 +545,7 @@ export class GameScene extends Phaser.Scene {
     const outcome = this.boardManager.tryPlace(piece.trayIndex, origin.x, origin.y);
     if (!outcome.ok) {
       this.audio.playInvalid();
+      void this.haptics.tickLight();
       piece.returnHome(true);
       return;
     }
@@ -551,6 +560,7 @@ export class GameScene extends Phaser.Scene {
 
     this.boardView.render(stamped);
     this.audio.playPlace();
+    void this.haptics.tickLight();
     this.boardView.animatePlacement(previewCells, piece.shape.colorId);
 
     const finish = (): void => {
@@ -561,10 +571,16 @@ export class GameScene extends Phaser.Scene {
 
       if (outcome.breakdown && outcome.breakdown.total > 0 && lines.linesCleared > 0) {
         this.showScoreFloat(outcome.breakdown.total, lines.clearedCells);
+        showClearBanner(
+          this,
+          lines.linesCleared,
+          outcome.combo ?? this.boardManager.getState().combo,
+        );
       }
 
       if (outcome.isGameOver) {
         this.audio.playGameOver();
+        void this.haptics.tickMedium();
         this.showGameOver();
       }
     };
@@ -572,6 +588,7 @@ export class GameScene extends Phaser.Scene {
     if (lines.clearedCells.length > 0) {
       this.time.delayedCall(140, () => {
         this.audio.playClear(lines.linesCleared);
+        void this.haptics.tickMedium();
         this.boardView.animateClear(lines.clearedCells, finish);
       });
     } else {
@@ -653,13 +670,78 @@ export class GameScene extends Phaser.Scene {
     this.updateUndoLabel();
   }
 
+  private closeOverlay(): void {
+    this.overlay?.destroy();
+    this.overlay = undefined;
+    this.overlayKind = 'none';
+    this.inputLocked = false;
+  }
+
+  private showSettings(): void {
+    this.inputLocked = true;
+    this.overlayKind = 'settings';
+    this.overlay?.destroy();
+
+    const soundLabel = this.audio.isMuted() ? 'Sound: Off' : 'Sound: On';
+    const hapticsLabel = this.haptics.isEnabled() ? 'Haptics: On' : 'Haptics: Off';
+
+    this.overlay = createCenteredModal(this, {
+      title: 'Settings',
+      body: `${soundLabel}\n${hapticsLabel}\n\nBlock Quest v0.1.0\nOffline puzzle — no account needed.`,
+      depth: 220,
+      buttons: [
+        {
+          label: soundLabel,
+          onClick: () => {
+            const next = !this.audio.isMuted();
+            this.audio.setMuted(next);
+            this.storage.setMuted(next);
+            if (!next) {
+              this.audio.playUi();
+            }
+            void this.haptics.tickLight();
+            this.showSettings();
+          },
+        },
+        {
+          label: hapticsLabel,
+          onClick: () => {
+            const next = !this.haptics.isEnabled();
+            this.haptics.setEnabled(next);
+            this.storage.setHapticsEnabled(next);
+            this.audio.playUi();
+            if (next) {
+              void this.haptics.tickMedium();
+            }
+            this.showSettings();
+          },
+        },
+        {
+          label: 'How to Play',
+          onClick: () => {
+            this.audio.playUi();
+            this.closeOverlay();
+            this.showTutorial();
+          },
+        },
+        {
+          label: 'Close',
+          onClick: () => {
+            this.audio.playUi();
+            this.closeOverlay();
+          },
+        },
+      ],
+    });
+  }
+
   private showTutorial(): void {
     this.inputLocked = true;
     this.overlayKind = 'tutorial';
     this.overlay = createCenteredModal(this, {
       title: 'How to Play',
       body:
-        'Drag pieces from the tray onto the board.\n\nClear full rows or columns to score.\n\nUse Undo (3 per run) if you need a second chance.\n\nTry Daily for a shared puzzle each day.',
+        'Drag pieces from the tray onto the board.\n\nClear full rows or columns to score.\n\nUse Undo (3 per run) if you need a second chance.\n\nTry Daily for a shared puzzle each day.\n\nOpen Menu for sound and haptics.',
       depth: 220,
       buttons: [
         {
@@ -667,10 +749,7 @@ export class GameScene extends Phaser.Scene {
           onClick: () => {
             this.storage.setTutorialSeen(true);
             this.audio.playUi();
-            this.overlay?.destroy();
-            this.overlay = undefined;
-            this.overlayKind = 'none';
-            this.inputLocked = false;
+            this.closeOverlay();
           },
         },
       ],

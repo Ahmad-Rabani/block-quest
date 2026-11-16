@@ -35,6 +35,15 @@ export class StorageService {
     this.write(STORAGE_KEYS.muted, muted ? '1' : '0');
   }
 
+  /** Haptics default on for native; preference still stored for all platforms. */
+  isHapticsEnabled(): boolean {
+    return this.readBool(STORAGE_KEYS.haptics, true);
+  }
+
+  setHapticsEnabled(enabled: boolean): void {
+    this.write(STORAGE_KEYS.haptics, enabled ? '1' : '0');
+  }
+
   hasSeenTutorial(): boolean {
     return this.readBool(STORAGE_KEYS.tutorialSeen, false);
   }
