@@ -13,7 +13,8 @@
     "cap:sync": "npm run build && npx cap sync android",
     "cap:open:android": "npx cap open android",
     "android:sync": "npm run cap:sync",
-    "assets:brand": "node scripts/generate-brand-assets.mjs"
+    "assets:brand": "node scripts/generate-brand-assets.mjs",
+    "store:shots": "npm run build && node scripts/capture-store-screenshots.mjs"
   },
   "engines": {
     "node": ">=22"
@@ -28,6 +29,7 @@
     "@capacitor/android": "^8.6.2",
     "@capacitor/cli": "^8.6.2",
     "@types/node": "^26.6.6",
+    "playwright": "^1.65.1",
     "sharp": "^0.34.4",
     "typescript": "^7.0.2",
     "vite": "^8.3.8",

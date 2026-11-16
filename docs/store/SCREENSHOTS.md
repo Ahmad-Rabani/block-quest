@@ -54,8 +54,25 @@ Capture **portrait** frames. Useful minimum set (4–8):
 - Source idea: brand splash colors + “BLOCK QUEST” wordmark + a few blocks
 - File suggestion: `assets/store/feature-graphic-1024x500.png` *(create before submit)*
 
+## Automated capture
+
+```bash
+npm run store:shots
+```
+
+Uses built `vite preview` + Playwright at **1080×1920** with `?storeShot=` demo boards.
+
+Current files:
+
+- `01-menu.png`
+- `02-classic-play.png`
+- `03-daily.png`
+- `04-game-over.png`
+
 ## Checklist before upload
 
+- [x] Core portrait set generated (menu / play / daily / game over)
+- [ ] Optional: drag preview + line-clear frames
 - [ ] No debug text / FPS counters
 - [ ] No competitor branding
 - [ ] No personal data visible

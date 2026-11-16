@@ -1,5 +1,11 @@
 # Block Quest — Changelog
 
+## 2026-11-16 — Store screenshot capture pipeline
+
+### Added
+- `?storeShot=menu|play|daily|gameover` demo routes for store art
+- `npm run store:shots` (Playwright) writing 1080×1920 PNGs to `assets/store/screenshots/android/`
+
 ## 2026-11-16 — Mobile web framing + release prep docs
 
 ### Changed

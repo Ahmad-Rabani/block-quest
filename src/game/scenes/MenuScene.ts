@@ -10,6 +10,8 @@ import type { PlayMode } from '../systems/BoardManager';
 export type GameStartData = {
   mode: PlayMode;
   continueRun?: boolean;
+  /** Store screenshot / demo boards — skips tutorial. */
+  storeShot?: 'play' | 'daily' | 'gameover';
 };
 
 /**

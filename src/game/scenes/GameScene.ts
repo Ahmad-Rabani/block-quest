@@ -24,6 +24,7 @@ import { fitTrayCellSize } from '../ui/trayFit';
 import { showClearBanner } from '../ui/ClearBanner';
 import { createCenteredModal } from '../ui/ModalFactory';
 import type { GameStartData } from './MenuScene';
+import { snapshotForStoreShot } from '../storeShots';
 
 const DRAG_LIFT_Y = 92;
 const DRAG_THRESHOLD = 8;
@@ -44,6 +45,7 @@ export class GameScene extends Phaser.Scene {
   private trayPanel?: Phaser.GameObjects.Graphics;
   private inputLocked = false;
   private startMode: PlayMode = 'classic';
+  private storeShot: GameStartData['storeShot'];
 
   private activePiece: PieceView | null = null;
   private dragPointerId: number | null = null;
@@ -57,6 +59,7 @@ export class GameScene extends Phaser.Scene {
   init(data: GameStartData): void {
     this.startMode = data?.mode === 'daily' ? 'daily' : 'classic';
     this.pendingContinue = Boolean(data?.continueRun);
+    this.storeShot = data?.storeShot;
   }
 
   private pendingContinue = false;
@@ -77,7 +80,10 @@ export class GameScene extends Phaser.Scene {
       this.startMode === 'daily' ? this.storage.getDailyBest(day) : classicBest,
     );
 
-    if (this.pendingContinue) {
+    if (this.storeShot) {
+      this.boardManager.restoreRunSnapshot(snapshotForStoreShot(this.storeShot));
+      this.startMode = this.boardManager.getMode();
+    } else if (this.pendingContinue) {
       const snap = this.storage.getActiveRun();
       if (snap) {
         this.boardManager.restoreRunSnapshot(snap);
@@ -101,7 +107,12 @@ export class GameScene extends Phaser.Scene {
     this.bindInput();
     this.renderAll();
 
-    if (!this.storage.hasSeenTutorial()) {
+    if (this.storeShot === 'gameover') {
+      this.showGameOver();
+      return;
+    }
+
+    if (!this.storeShot && !this.storage.hasSeenTutorial()) {
       this.showTutorial();
     }
   }

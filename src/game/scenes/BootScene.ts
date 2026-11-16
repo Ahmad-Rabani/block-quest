@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
 import { PALETTE } from '../../domain/constants';
+import { readStoreShotParam } from '../storeShots';
+import type { GameStartData } from './MenuScene';
 
 export class BootScene extends Phaser.Scene {
   constructor() {
@@ -12,6 +14,20 @@ export class BootScene extends Phaser.Scene {
   }
 
   create(): void {
+    const storeShot = readStoreShotParam();
+    if (storeShot === 'menu') {
+      this.scene.start('MenuScene');
+      return;
+    }
+    if (storeShot === 'play' || storeShot === 'daily' || storeShot === 'gameover') {
+      const data: GameStartData = {
+        mode: storeShot === 'daily' ? 'daily' : 'classic',
+        storeShot,
+      };
+      this.scene.start('GameScene', data);
+      return;
+    }
+
     const { width, height } = this.scale;
     this.cameras.main.setBackgroundColor(PALETTE.background);
 

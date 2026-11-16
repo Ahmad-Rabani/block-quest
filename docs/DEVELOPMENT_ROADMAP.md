@@ -198,7 +198,8 @@ No ads or analytics before approval.
 - [x] Feature graphic (`assets/store/feature-graphic-1024x500.png`)
 - [x] Release build instructions (`docs/store/RELEASE_BUILDS.md`)
 - [x] Store submission checklist (`docs/store/SUBMISSION_CHECKLIST.md`)
-- [ ] Capture real gameplay screenshots into `assets/store/screenshots/`
+- [x] Capture store screenshots into `assets/store/screenshots/android/` (`npm run store:shots`)
+- [ ] Optional extra shots (drag / clear) if listing needs more than 4
 - [ ] Host privacy policy URL + real support contact
 - [ ] Produce signed release AAB (needs SDK + keystore)
 - [ ] Owner approval to upload
