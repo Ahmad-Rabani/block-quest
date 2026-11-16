@@ -1,5 +1,20 @@
 # Block Quest — Changelog
 
+## 2026-11-16 — Phase 9 release preparation (no publish)
+
+### Added
+- `docs/store/` — listing copy, privacy draft, screenshots guide, release builds, submission checklist
+- `assets/store/feature-graphic-1024x500.png` (+ master)
+- Screenshot folder placeholder `assets/store/screenshots/android/`
+
+### Notes
+- No store upload performed
+- Real gameplay screenshots and signed AAB still pending
+
+### Verified
+- `npm test` — 31 passed
+- `npm run build` — success
+
 ## 2026-11-16 — Phase 8 QA (automated)
 
 ### Added

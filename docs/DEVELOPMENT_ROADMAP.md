@@ -184,16 +184,20 @@ No ads or analytics before approval.
 
 ## PHASE 9 — Release Preparation
 
-**Status:** In progress (brand icons/splash started) — do not publish without explicit approval
+**Status:** Documentation + graphics ready — **do not publish without explicit approval**
 
 ### Tasks
 
 - [x] Create Block Quest brand icon + splash masters
 - [x] Generate Android mipmaps / splash drawables + web favicon
 - [x] Show brand icon on BootScene
-- [ ] Store screenshots
-- [ ] Store descriptions
-- [ ] Privacy documentation
-- [ ] Review platform requirements
-- [ ] Prepare release builds
-- [ ] Store submission checklist
+- [x] Store descriptions draft (`docs/store/STORE_LISTING.md`)
+- [x] Privacy documentation draft (`docs/store/PRIVACY.md`)
+- [x] Screenshot guide + folder (`docs/store/SCREENSHOTS.md`)
+- [x] Feature graphic (`assets/store/feature-graphic-1024x500.png`)
+- [x] Release build instructions (`docs/store/RELEASE_BUILDS.md`)
+- [x] Store submission checklist (`docs/store/SUBMISSION_CHECKLIST.md`)
+- [ ] Capture real gameplay screenshots into `assets/store/screenshots/`
+- [ ] Host privacy policy URL + real support contact
+- [ ] Produce signed release AAB (needs SDK + keystore)
+- [ ] Owner approval to upload

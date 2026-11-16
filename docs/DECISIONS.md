@@ -134,3 +134,10 @@ Record significant decisions here. New chats must read this before changing esta
 - **Decision:** Treat unit/build green as necessary but not sufficient; device/manual rows live in `docs/QA_CHECKLIST.md` and must be signed off before store submit.
 - **Rationale:** This environment lacks Android SDK; QA must survive chat boundaries via files.
 - **Status:** Accepted
+
+## DEC-020 — Phase 9 prepares artifacts but never auto-publishes
+
+- **Date:** 2026-11-16
+- **Decision:** Produce listing/privacy/release docs and marketing graphics in-repo; require explicit owner approval before any store upload.
+- **Rationale:** Matches project hard prohibitions; keeps commercial release under human control.
+- **Status:** Accepted

@@ -65,3 +65,4 @@ Ads, analytics, online accounts, unnecessary network requests, store publishing,
 | `docs/CHANGELOG.md` | Milestone change history |
 | `docs/ANDROID.md` | Capacitor Android setup |
 | `docs/QA_CHECKLIST.md` | Phase 8 manual + device QA checklist |
+| `docs/store/` | Phase 9 listing, privacy, screenshots, release, submission |

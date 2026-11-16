@@ -1,36 +1,41 @@
 # Block Quest — Current Status
 
 **Last updated:** 2026-11-16  
-**Current phase:** Phase 8 — Quality Assurance (**automated + checklist done; device matrix pending**)  
-**Active milestone:** Manual browser checklist + Android Studio device smoke when SDK available; then finish Phase 9 store prep
+**Current phase:** Phase 9 — Release Preparation (**docs + brand/store graphics ready; no publish**)  
+**Active milestone:** Capture real gameplay screenshots; complete Phase 8 device QA; await approval before any store upload
 
 ## Project state
 
-- Automated QA expanded: **31** unit tests passing
-- Permanent manual checklist: `docs/QA_CHECKLIST.md`
-- Phase 6 iOS deferred (Windows); Phase 7 ads blocked without approval
-- Brand icons/splash present (Phase 9 partial)
+- Phases 0–5 + Phase 8 automated QA in place
+- Phase 6 iOS deferred (macOS); Phase 7 ads blocked
+- Phase 9 store package drafted under `docs/store/` + `assets/store/`
+- Unit tests **31/31**; build green
 
-## Completed this milestone (Phase 8)
+## Completed (Phase 9 this milestone)
 
-- Edge-case tests: full-board clear uniqueness, game-over rules, tray refill condition, undo limits
-- Storage persistence tests (best score, daily best, mute, tutorial)
-- `docs/QA_CHECKLIST.md` sections A–G for browser / size / offline / Android / performance
-- Verified: `npm test` 31/31, `npm run build` success
+- Store listing draft (`docs/store/STORE_LISTING.md`)
+- Privacy policy draft (`docs/store/PRIVACY.md`)
+- Screenshot capture guide (`docs/store/SCREENSHOTS.md`)
+- Release build instructions (`docs/store/RELEASE_BUILDS.md`)
+- Submission checklist (`docs/store/SUBMISSION_CHECKLIST.md`)
+- Play feature graphic `assets/store/feature-graphic-1024x500.png`
+- Screenshot folder placeholder `assets/store/screenshots/android/`
 
 ## Incomplete / next
 
-1. You: walk through `docs/QA_CHECKLIST.md` sections B–D in the browser
-2. Android Studio: section F when SDK is installed
-3. Finish Phase 9 (screenshots, descriptions, privacy, release checklist)
-4. Phase 6 on macOS later; Phase 7 only with approval
+1. Capture real gameplay screenshots into `assets/store/screenshots/android/`
+2. Finish Phase 8 manual + Android device checklist
+3. Replace privacy contact placeholders
+4. Build signed AAB when Android SDK/keystore available
+5. **Publish only after your explicit approval**
 
 ## Known bugs / limitations
 
-- Device/emulator QA not run here (`ANDROID_HOME` missing)
-- Low-end device + long soak tests not yet executed
+- Gameplay screenshots not yet captured from a live session
+- No Android SDK here → no release AAB produced
+- Privacy contact still placeholder email
 
 ## Blockers / decisions needed
 
-- Confirm any checklist failures you find
-- Approve Phase 7 only if you want ads/analytics
+- Approve store submission when checklists are green
+- Approve Phase 7 if/when ads or analytics are desired

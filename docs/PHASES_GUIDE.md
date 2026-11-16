@@ -128,12 +128,15 @@ Automated checks can pass while manual/device rows are still open.
 
 **Includes:** Custom icons, splash screens, screenshots, descriptions, privacy text, release builds, checklist.
 
+**Docs:** `docs/store/` · **Graphics:** `assets/store/`
+
 ---
 
 ## Recommended path on Windows right now
 
-1. Replace placeholder icons/splash with Block Quest brand art (**Phase 9 assets**).
-2. Install Android Studio → run Phase 5 device smoke test.
-3. Skip Phase 6 until you have a Mac.
-4. Do **not** start Phase 7 unless you ask for ads/analytics.
-5. Run Phase 8 QA before any store upload.
+1. Capture gameplay screenshots (`docs/store/SCREENSHOTS.md`).
+2. Finish Phase 8 manual + Android device QA.
+3. Fill privacy contact placeholders; host privacy URL when ready.
+4. Skip Phase 6 until you have a Mac.
+5. Do **not** start Phase 7 unless you ask for ads/analytics.
+6. Upload to stores **only** after you explicitly approve.
