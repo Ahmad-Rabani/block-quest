@@ -16,7 +16,7 @@ export interface PieceViewConfig {
 
 /**
  * Tray piece view. Hit area is the full tray slot, not just the drawn blocks,
- * so touch/mouse picking stays reliable.
+ * so touch/mouse picking stays reliable. Visual size is fitted to the slot.
  */
 export class PieceView extends Phaser.GameObjects.Container {
   readonly trayIndex: number;
@@ -27,6 +27,7 @@ export class PieceView extends Phaser.GameObjects.Container {
   private readonly hitHeight: number;
   private homeX: number;
   private homeY: number;
+  private homeScale = 1;
   private dragging = false;
   private readonly shapeGraphics: Phaser.GameObjects.Graphics;
 
@@ -45,7 +46,6 @@ export class PieceView extends Phaser.GameObjects.Container {
     this.add(this.shapeGraphics);
     this.drawShape();
 
-    // Hit area centered on container origin — full slot, padded for fat fingers.
     this.setSize(this.hitWidth, this.hitHeight);
     this.setInteractive(
       new Phaser.Geom.Rectangle(
@@ -74,7 +74,6 @@ export class PieceView extends Phaser.GameObjects.Container {
     );
   }
 
-  /** Visual width of the drawn shape (not the hit box). */
   getVisualWidth(): number {
     return this.measureVisual().width;
   }
@@ -88,9 +87,17 @@ export class PieceView extends Phaser.GameObjects.Container {
     this.homeY = y;
   }
 
+  setHomeScale(scale: number): void {
+    this.homeScale = scale;
+    this.setScale(scale);
+  }
+
+  getHomeScale(): number {
+    return this.homeScale;
+  }
+
   returnHome(animate: boolean = true): void {
     this.dragging = false;
-    this.setScale(1);
     this.setAlpha(1);
     this.setDepth(10);
     if (animate) {
@@ -98,11 +105,13 @@ export class PieceView extends Phaser.GameObjects.Container {
         targets: this,
         x: this.homeX,
         y: this.homeY,
+        scale: this.homeScale,
         duration: 180,
         ease: 'Back.Out',
       });
     } else {
       this.setPosition(this.homeX, this.homeY);
+      this.setScale(this.homeScale);
     }
   }
 
@@ -110,16 +119,23 @@ export class PieceView extends Phaser.GameObjects.Container {
     this.dragging = active;
     if (active) {
       this.setDepth(120);
-      this.setScale(1.12);
+      this.setScale(this.homeScale * 1.14);
       this.setAlpha(0.95);
     } else {
       this.setDepth(10);
-      this.setScale(1);
+      this.setScale(this.homeScale);
       this.setAlpha(1);
     }
   }
 
-  private measureVisual(): { width: number; height: number; minX: number; minY: number; maxX: number; maxY: number } {
+  private measureVisual(): {
+    width: number;
+    height: number;
+    minX: number;
+    minY: number;
+    maxX: number;
+    maxY: number;
+  } {
     let minX = Infinity;
     let minY = Infinity;
     let maxX = -Infinity;
@@ -153,7 +169,6 @@ export class PieceView extends Phaser.GameObjects.Container {
 
     this.shapeGraphics.clear();
 
-    // Soft drop shadow under the whole piece.
     this.shapeGraphics.fillStyle(0x2a2550, 0.12);
     for (const c of this.shape.cells) {
       const px = offsetX + (c.x - minX) * stride + 2;
@@ -166,7 +181,6 @@ export class PieceView extends Phaser.GameObjects.Container {
       const px = offsetX + (c.x - minX) * stride;
       const py = offsetY + (c.y - minY) * stride;
       this.shapeGraphics.fillRoundedRect(px, py, this.cellSize, this.cellSize, radius);
-      // Subtle top highlight for depth.
       this.shapeGraphics.fillStyle(highlight, 0.18);
       this.shapeGraphics.fillRoundedRect(
         px + 2,

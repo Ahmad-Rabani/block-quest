@@ -34,6 +34,7 @@
 - Gameplay screenshots not yet captured from a live session
 - No Android SDK here → no release AAB produced
 - Privacy contact still placeholder email
+- Tray overflow for long pieces — **fixed** via `fitTrayCellSize` (refresh browser)
 
 ## Blockers / decisions needed
 

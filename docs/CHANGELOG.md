@@ -1,5 +1,18 @@
 # Block Quest — Changelog
 
+## 2026-11-16 — Tray overflow UI fix + feature backlog
+
+### Fixed
+- Long tray pieces (e.g. 1×4) overflowing slots — per-shape `fitTrayCellSize`
+- Mute control label clarified (`SFX` / `Mute`)
+
+### Added
+- `docs/FEATURE_BACKLOG.md` prioritized improvement list
+- `tests/trayFit.test.ts`
+
+### Verified
+- `npm test` — 32 passed
+
 ## 2026-11-16 — Phase 9 release preparation (no publish)
 
 ### Added

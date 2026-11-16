@@ -11,6 +11,7 @@ import { NativeLifecycleService } from '../../services/NativeLifecycleService';
 import { StorageService } from '../../services/StorageService';
 import { DESIGN_WIDTH } from '../config/gameConfig';
 import { computeBoardMetrics, computeTrayLayout, LAYOUT } from '../ui/layout';
+import { fitTrayCellSize } from '../ui/trayFit';
 import { createCenteredModal } from '../ui/ModalFactory';
 
 const DRAG_LIFT_Y = 92;
@@ -238,9 +239,9 @@ export class GameScene extends Phaser.Scene {
     bg.setInteractive(new Phaser.Geom.Circle(bx, by, 17), Phaser.Geom.Circle.Contains);
 
     this.muteLabel = this.add
-      .text(bx, by, this.audio.isMuted() ? 'Off' : 'On', {
+      .text(bx, by, this.audio.isMuted() ? 'Mute' : 'SFX', {
         fontFamily: 'Segoe UI, system-ui, sans-serif',
-        fontSize: '11px',
+        fontSize: '10px',
         fontStyle: 'bold',
         color: PALETTE.primaryPurple,
       })
@@ -254,7 +255,7 @@ export class GameScene extends Phaser.Scene {
       const next = !this.audio.isMuted();
       this.audio.setMuted(next);
       this.storage.setMuted(next);
-      this.muteLabel.setText(next ? 'Off' : 'On');
+      this.muteLabel.setText(next ? 'Mute' : 'SFX');
       if (!next) {
         this.audio.playUi();
       }
@@ -322,18 +323,26 @@ export class GameScene extends Phaser.Scene {
         return;
       }
       const center = layout.slotCenters[index]!;
+      const cellSize = fitTrayCellSize(
+        slot.shape,
+        layout.slotWidth,
+        layout.slotHeight,
+        layout.cellSize,
+        layout.gap,
+      );
       const view = new PieceView(this, {
         trayIndex: index,
         shape: slot.shape,
-        cellSize: layout.cellSize,
+        cellSize,
         gap: layout.gap,
         centerX: center.x,
         centerY: center.y,
         hitWidth: layout.hitWidth,
         hitHeight: layout.hitHeight,
       });
+      view.setHomeScale(1);
       if (animate) {
-        view.setScale(0.7);
+        view.setScale(0.72);
         view.setAlpha(0);
         this.tweens.add({
           targets: view,

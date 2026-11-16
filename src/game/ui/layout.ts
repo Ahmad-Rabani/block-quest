@@ -13,6 +13,7 @@ export const LAYOUT = {
   trayBottomMargin: 18,
   trayInnerPad: 12,
   traySlotGap: 10,
+  trayPiecePad: 14,
 } as const;
 
 export interface TrayLayout {
@@ -76,7 +77,8 @@ export function computeTrayLayout(boardBottom: number, boardCellSize: number): T
     slotY,
     hitWidth: slotWidth,
     hitHeight: slotHeight,
-    cellSize: Math.max(22, Math.floor(boardCellSize * 0.86)),
+    /** Preferred tray cell size before per-shape fit. */
+    cellSize: Math.max(18, Math.floor(boardCellSize * 0.78)),
     gap: 3,
   };
 }
