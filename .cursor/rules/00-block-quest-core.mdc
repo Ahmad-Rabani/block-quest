@@ -1,0 +1,44 @@
+---
+description: Permanent architecture, coding, workflow, and development rules for Block Quest.
+globs:
+alwaysApply: true
+---
+
+# Block Quest — Permanent Project Rules
+
+Commercial 2D block puzzle. Portrait mobile (Android/iOS) + browser for development. Stack: TypeScript, Phaser 4, Vite, Vitest, Capacitor 8 (later).
+
+## Before Any Task
+
+1. Read `docs/PROJECT_OVERVIEW.md` before major work.
+2. Read `docs/CURRENT_STATUS.md` before starting a task.
+3. Read `docs/DEVELOPMENT_ROADMAP.md` to identify the current phase.
+4. Read `docs/ARCHITECTURE.md` before changing architecture.
+5. Read `docs/DEVELOPMENT_WORKFLOW.md` before implementation.
+6. Read `docs/DECISIONS.md` before changing an established technical decision.
+7. Inspect the actual codebase — do not assume files or implementations exist.
+
+Reconstruct context from the repository every chat. Never rely on prior chat memory alone.
+
+## Coding Standards
+
+- Make small, focused, reviewable changes. Avoid unnecessary refactoring.
+- Avoid unnecessary dependencies. Inspect `package.json` before installing. Do not upgrade without a technical reason.
+- Use strict TypeScript.
+- Keep business/game logic separate from Phaser rendering. Domain must not import Phaser.
+- Write and maintain relevant tests. Never invent successful test results. Never claim something works without verification.
+- Handle errors and edge cases. Never silently remove existing functionality.
+- Follow existing codebase patterns. Update documentation when implementation or decisions change.
+- No iOS native project on Windows. Do not add ads/analytics until approved phase.
+
+## Hard Prohibitions
+
+- NEVER push code to Git, publish the app, upload store builds, or purchase services.
+- NEVER make destructive changes without explaining impact.
+- Local development commands and tests are allowed when required.
+
+## After Every Milestone
+
+Update `docs/CURRENT_STATUS.md`, `docs/CHANGELOG.md`, `docs/DEVELOPMENT_ROADMAP.md`, and `docs/DECISIONS.md` when decisions change. Provide a completion report. Never mark a phase complete unless acceptance criteria are satisfied.
+
+If docs and code disagree: inspect implementation, identify the gap, do not silently rewrite working code, then update docs appropriately.

@@ -1,0 +1,26 @@
+{
+  "name": "block-quest",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Block Quest — commercial 2D block puzzle (Phaser 4 + TypeScript)",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "phaser": "^4.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.0"
+  }
+}

@@ -1,0 +1,73 @@
+# Block Quest — Technical Decisions
+
+Record significant decisions here. New chats must read this before changing established choices.
+
+## DEC-001 — Technology baseline
+
+- **Date:** 2026-11-16
+- **Decision:** TypeScript (strict) + Phaser 4.2.1 + Vite + Vitest. Capacitor 8 deferred to Phase 5.
+- **Rationale:** Matches product brief; Phaser 4.2.1 confirmed on npm; Node 22 available in environment.
+- **Status:** Accepted
+
+## DEC-002 — Domain / rendering separation
+
+- **Date:** 2026-11-16
+- **Decision:** Pure game rules live in `src/domain/` with no Phaser imports. Phaser scenes/views consume domain results.
+- **Rationale:** Unit-testable rules; safer future native wrap; clearer architecture.
+- **Status:** Accepted
+
+## DEC-003 — Board and piece model
+
+- **Date:** 2026-11-16
+- **Decision:** 8×8 board as a flat or 2D occupancy grid of cell states. Pieces defined as relative `{x,y}` offsets from an anchor. Three tray slots; refill when all used.
+- **Rationale:** Spec requirement; simple validation and generation.
+- **Status:** Accepted
+
+## DEC-004 — Scoring values are configurable constants
+
+- **Date:** 2026-11-16
+- **Decision:** Initial scoring (1 per block, 10/25/45/70+ lines, combo bonus) lives in domain constants and may be tuned later without rewriting systems.
+- **Rationale:** Spec states these are initial balancing values, not final design.
+- **Status:** Accepted
+
+## DEC-005 — Persistence
+
+- **Date:** 2026-11-16
+- **Decision:** Best score via `localStorage` through `StorageService`. No backend for MVP.
+- **Rationale:** Offline-first; works in browser and future Capacitor WebView.
+- **Status:** Accepted
+
+## DEC-006 — No iOS project on Windows
+
+- **Date:** 2026-11-16
+- **Decision:** Do not add Capacitor iOS platform during Windows development.
+- **Rationale:** Xcode/macOS required; avoids broken/partial native trees.
+- **Status:** Accepted
+
+## DEC-007 — Monetization / analytics deferred
+
+- **Date:** 2026-11-16
+- **Decision:** No ads, analytics, accounts, or network telemetry until Phase 7 and explicit approval.
+- **Rationale:** Core experience first; privacy and store compliance later.
+- **Status:** Accepted
+
+## DEC-008 — Source layout
+
+- **Date:** 2026-11-16
+- **Decision:** Use the structure in `docs/ARCHITECTURE.md` (`domain`, `game/{config,scenes,systems,objects}`, `services`, `styles`, `tests/`).
+- **Rationale:** Matches product brief; clear separation of concerns.
+- **Status:** Accepted
+
+## DEC-009 — Combo scoring formula
+
+- **Date:** 2026-11-16
+- **Decision:** Combo streak increments on each placement that clears ≥1 line; resets on a placement with zero lines. Combo bonus = `comboBefore * comboBonusPerStreak` (default 5) when a clear happens with an existing streak.
+- **Rationale:** Spec required a configurable combo bonus; keeps first clear of a streak without retroactive bonus.
+- **Status:** Accepted
+
+## DEC-010 — Tap-to-place behavior (MVP)
+
+- **Date:** 2026-11-16
+- **Decision:** Short tap on a tray piece places it at the first valid origin (scan order top-left). Drag remains primary.
+- **Rationale:** Spec asked for tap-to-place where practical; refined targeting deferred to Phase 3.
+- **Status:** Accepted (may revisit in Phase 3)
