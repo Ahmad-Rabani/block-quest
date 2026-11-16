@@ -20,9 +20,18 @@ export function createGameConfig(parent: string | HTMLElement): Phaser.Types.Cor
       autoCenter: Phaser.Scale.CENTER_BOTH,
       width: DESIGN_WIDTH,
       height: DESIGN_HEIGHT,
+      // Helps short phones / desktop windows keep the portrait frame readable.
+      min: {
+        width: 280,
+        height: 500,
+      },
     },
     input: {
       activePointers: 3,
+    },
+    render: {
+      antialias: true,
+      roundPixels: true,
     },
     banner: false,
   };

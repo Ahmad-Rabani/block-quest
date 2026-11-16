@@ -131,27 +131,83 @@ export class BoardView {
     this.previewGraphics.clear();
   }
 
-  flashCleared(cells: readonly Coord[]): void {
+  /** Brief pop on newly placed cells. */
+  animatePlacement(cells: readonly Coord[], colorId: number): void {
     if (cells.length === 0) {
       return;
     }
-    const flash = this.scene.add.graphics().setDepth(4);
-    const { originX, originY, cellSize, gap } = this.layout;
-    const stride = cellSize + gap;
+    const hex = COLOR_HEX[colorId] ?? PALETTE.primaryPurple;
+    const color = Phaser.Display.Color.HexStringToColor(hex).color;
+    const { cellSize } = this.layout;
     const radius = Math.max(5, cellSize * 0.2);
-    flash.fillStyle(0xffffff, 0.9);
+
     for (const c of cells) {
-      const px = originX + c.x * stride;
-      const py = originY + c.y * stride;
-      flash.fillRoundedRect(px, py, cellSize, cellSize, radius);
+      const world = this.cellToWorld(c.x, c.y);
+      const g = this.scene.add.graphics().setDepth(5);
+      g.fillStyle(color, 1);
+      g.fillRoundedRect(-cellSize / 2, -cellSize / 2, cellSize, cellSize, radius);
+      g.setPosition(world.x, world.y);
+      g.setScale(0.55);
+      g.setAlpha(0.95);
+      this.scene.tweens.add({
+        targets: g,
+        scale: 1.08,
+        duration: 120,
+        ease: 'Back.Out',
+        yoyo: true,
+        hold: 20,
+        onComplete: () => g.destroy(),
+      });
     }
+  }
+
+  /** Bright flash then shrink/fade cleared cells. */
+  animateClear(cells: readonly Coord[], onDone?: () => void): void {
+    if (cells.length === 0) {
+      onDone?.();
+      return;
+    }
+
+    const { cellSize } = this.layout;
+    const radius = Math.max(5, cellSize * 0.2);
+    const overlays: Phaser.GameObjects.Graphics[] = [];
+
+    for (const c of cells) {
+      const world = this.cellToWorld(c.x, c.y);
+      const g = this.scene.add.graphics().setDepth(6);
+      g.fillStyle(0xffffff, 1);
+      g.fillRoundedRect(-cellSize / 2, -cellSize / 2, cellSize, cellSize, radius);
+      g.setPosition(world.x, world.y);
+      overlays.push(g);
+    }
+
     this.scene.tweens.add({
-      targets: flash,
-      alpha: 0,
-      duration: 260,
-      ease: 'Cubic.Out',
-      onComplete: () => flash.destroy(),
+      targets: overlays,
+      scale: 1.15,
+      duration: 90,
+      ease: 'Quad.Out',
+      yoyo: true,
+      onComplete: () => {
+        this.scene.tweens.add({
+          targets: overlays,
+          scale: 0.15,
+          alpha: 0,
+          duration: 220,
+          ease: 'Cubic.In',
+          onComplete: () => {
+            for (const g of overlays) {
+              g.destroy();
+            }
+            onDone?.();
+          },
+        });
+      },
     });
+  }
+
+  /** @deprecated Prefer animateClear — kept for call-site compatibility during transition. */
+  flashCleared(cells: readonly Coord[]): void {
+    this.animateClear(cells);
   }
 
   private drawBackground(): void {

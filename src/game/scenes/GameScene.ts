@@ -5,6 +5,7 @@ import type { Coord } from '../../domain/types';
 import { BoardManager } from '../systems/BoardManager';
 import { BoardView } from '../objects/BoardView';
 import { PieceView } from '../objects/PieceView';
+import { AudioService } from '../../services/AudioService';
 import { StorageService } from '../../services/StorageService';
 import { DESIGN_HEIGHT, DESIGN_WIDTH } from '../config/gameConfig';
 
@@ -15,13 +16,16 @@ const DRAG_THRESHOLD = 8;
 
 export class GameScene extends Phaser.Scene {
   private storage = new StorageService();
+  private audio!: AudioService;
   private boardManager!: BoardManager;
   private boardView!: BoardView;
   private pieceViews: PieceView[] = [];
   private scoreText!: Phaser.GameObjects.Text;
   private bestText!: Phaser.GameObjects.Text;
+  private muteLabel!: Phaser.GameObjects.Text;
   private overlay?: Phaser.GameObjects.Container;
   private trayPanel?: Phaser.GameObjects.Graphics;
+  private inputLocked = false;
 
   private activePiece: PieceView | null = null;
   private dragPointerId: number | null = null;
@@ -34,6 +38,7 @@ export class GameScene extends Phaser.Scene {
 
   create(): void {
     this.cameras.main.setBackgroundColor(PALETTE.background);
+    this.audio = new AudioService(this.storage.isMuted());
     this.drawBackdrop();
 
     const best = this.storage.getBestScore();
@@ -45,11 +50,14 @@ export class GameScene extends Phaser.Scene {
     this.refreshTray();
     this.bindInput();
     this.renderAll();
+
+    if (!this.storage.hasSeenTutorial()) {
+      this.showTutorial();
+    }
   }
 
   private drawBackdrop(): void {
     const g = this.add.graphics().setDepth(-10);
-    // Soft vignette / ambient blobs — premium atmosphere without clutter.
     g.fillStyle(0x6545d6, 0.06);
     g.fillCircle(DESIGN_WIDTH * 0.15, 120, 140);
     g.fillStyle(0x42a5f5, 0.07);
@@ -62,7 +70,7 @@ export class GameScene extends Phaser.Scene {
     this.add
       .text(DESIGN_WIDTH / 2, 36, 'BLOCK QUEST', {
         fontFamily: 'Segoe UI, system-ui, sans-serif',
-        fontSize: '30px',
+        fontSize: '28px',
         fontStyle: 'bold',
         color: PALETTE.primaryPurple,
       })
@@ -73,20 +81,20 @@ export class GameScene extends Phaser.Scene {
     const chipH = 36;
     const scoreChip = this.add.graphics().setDepth(5);
     scoreChip.fillStyle(Phaser.Display.Color.HexStringToColor(PALETTE.white).color, 1);
-    scoreChip.fillRoundedRect(20, chipY - chipH / 2, 140, chipH, 18);
+    scoreChip.fillRoundedRect(20, chipY - chipH / 2, 118, chipH, 18);
     scoreChip.fillStyle(0x6545d6, 0.08);
-    scoreChip.fillRoundedRect(20, chipY - chipH / 2, 140, chipH, 18);
+    scoreChip.fillRoundedRect(20, chipY - chipH / 2, 118, chipH, 18);
 
     const bestChip = this.add.graphics().setDepth(5);
     bestChip.fillStyle(Phaser.Display.Color.HexStringToColor(PALETTE.white).color, 1);
-    bestChip.fillRoundedRect(DESIGN_WIDTH - 160, chipY - chipH / 2, 140, chipH, 18);
+    bestChip.fillRoundedRect(DESIGN_WIDTH - 138, chipY - chipH / 2, 118, chipH, 18);
     bestChip.fillStyle(0xff9b54, 0.1);
-    bestChip.fillRoundedRect(DESIGN_WIDTH - 160, chipY - chipH / 2, 140, chipH, 18);
+    bestChip.fillRoundedRect(DESIGN_WIDTH - 138, chipY - chipH / 2, 118, chipH, 18);
 
     this.scoreText = this.add
-      .text(90, chipY, 'Score 0', {
+      .text(79, chipY, 'Score 0', {
         fontFamily: 'Segoe UI, system-ui, sans-serif',
-        fontSize: '16px',
+        fontSize: '15px',
         fontStyle: 'bold',
         color: PALETTE.text,
       })
@@ -94,14 +102,50 @@ export class GameScene extends Phaser.Scene {
       .setDepth(6);
 
     this.bestText = this.add
-      .text(DESIGN_WIDTH - 90, chipY, `Best ${this.boardManager.getState().bestScore}`, {
+      .text(DESIGN_WIDTH - 79, chipY, `Best ${this.boardManager.getState().bestScore}`, {
         fontFamily: 'Segoe UI, system-ui, sans-serif',
-        fontSize: '16px',
+        fontSize: '15px',
         fontStyle: 'bold',
         color: PALETTE.text,
       })
       .setOrigin(0.5)
       .setDepth(6);
+
+    this.createMuteButton();
+  }
+
+  private createMuteButton(): void {
+    const bx = DESIGN_WIDTH - 28;
+    const by = 34;
+    const bg = this.add.graphics().setDepth(8);
+    bg.fillStyle(Phaser.Display.Color.HexStringToColor(PALETTE.white).color, 1);
+    bg.fillCircle(bx, by, 16);
+    bg.fillStyle(0x6545d6, 0.1);
+    bg.fillCircle(bx, by, 16);
+    bg.setInteractive(new Phaser.Geom.Circle(bx, by, 18), Phaser.Geom.Circle.Contains);
+
+    this.muteLabel = this.add
+      .text(bx, by, this.audio.isMuted() ? 'Off' : 'On', {
+        fontFamily: 'Segoe UI, system-ui, sans-serif',
+        fontSize: '11px',
+        fontStyle: 'bold',
+        color: PALETTE.primaryPurple,
+      })
+      .setOrigin(0.5)
+      .setDepth(9);
+
+    bg.on('pointerup', () => {
+      if (this.inputLocked) {
+        return;
+      }
+      const next = !this.audio.isMuted();
+      this.audio.setMuted(next);
+      this.storage.setMuted(next);
+      this.muteLabel.setText(next ? 'Off' : 'On');
+      if (!next) {
+        this.audio.playUi();
+      }
+    });
   }
 
   private createBoard(): void {
@@ -128,7 +172,6 @@ export class GameScene extends Phaser.Scene {
     this.trayPanel.fillStyle(Phaser.Display.Color.HexStringToColor(PALETTE.white).color, 1);
     this.trayPanel.fillRoundedRect(margin, panelTop, DESIGN_WIDTH - margin * 2, panelHeight, 24);
 
-    // Three soft slot pads for clear pick targets.
     const innerPad = 14;
     const slotGap = 10;
     const usable = DESIGN_WIDTH - margin * 2 - innerPad * 2;
@@ -178,7 +221,7 @@ export class GameScene extends Phaser.Scene {
     };
   }
 
-  private refreshTray(): void {
+  private refreshTray(animate: boolean = true): void {
     for (const view of this.pieceViews) {
       view.destroy();
     }
@@ -206,6 +249,18 @@ export class GameScene extends Phaser.Scene {
         hitWidth: layout.hitWidth,
         hitHeight: layout.hitHeight,
       });
+      if (animate) {
+        view.setScale(0.7);
+        view.setAlpha(0);
+        this.tweens.add({
+          targets: view,
+          scale: 1,
+          alpha: 1,
+          duration: 180,
+          delay: index * 40,
+          ease: 'Back.Out',
+        });
+      }
       this.pieceViews.push(view);
     });
   }
@@ -214,7 +269,7 @@ export class GameScene extends Phaser.Scene {
     this.input.addPointer(2);
 
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
-      if (this.overlay || this.activePiece) {
+      if (this.inputLocked || this.overlay || this.activePiece) {
         return;
       }
       const hit = this.findPieceAt(pointer.x, pointer.y);
@@ -236,6 +291,7 @@ export class GameScene extends Phaser.Scene {
       if (!this.isDragging && dist >= DRAG_THRESHOLD) {
         this.isDragging = true;
         this.activePiece.markDragging(true);
+        this.audio.playUi();
       }
 
       if (this.isDragging) {
@@ -253,7 +309,6 @@ export class GameScene extends Phaser.Scene {
       if (this.isDragging) {
         this.tryDrop(piece);
       } else {
-        // Short press without drag — gentle shake (no auto-place; drag is primary).
         this.tweens.add({
           targets: piece,
           x: piece.x + 5,
@@ -285,7 +340,6 @@ export class GameScene extends Phaser.Scene {
   }
 
   private findPieceAt(x: number, y: number): PieceView | null {
-    // Prefer top-most / last drawn match within generous slot hit boxes.
     for (let i = this.pieceViews.length - 1; i >= 0; i--) {
       const piece = this.pieceViews[i]!;
       if (piece.containsPoint(x, y)) {
@@ -347,6 +401,7 @@ export class GameScene extends Phaser.Scene {
       return;
     }
 
+    this.audio.playInvalid();
     piece.returnHome(true);
   }
 
@@ -365,19 +420,99 @@ export class GameScene extends Phaser.Scene {
 
     const outcome = this.boardManager.tryPlace(piece.trayIndex, origin.x, origin.y);
     if (!outcome.ok) {
+      this.audio.playInvalid();
       piece.returnHome(true);
       return;
     }
 
     this.storage.setBestScore(outcome.bestScore ?? this.boardManager.getState().bestScore);
-    this.boardView.flashCleared(lines.clearedCells);
     this.boardView.clearPreview();
-    this.refreshTray();
-    this.renderAll();
+    piece.setVisible(false);
 
-    if (outcome.isGameOver) {
-      this.showGameOver();
+    // Show placed cells first, then clear animation, then final board.
+    this.boardView.render(stamped);
+    this.audio.playPlace();
+    this.boardView.animatePlacement(previewCells, piece.shape.colorId);
+
+    const finish = (): void => {
+      this.boardView.render(this.boardManager.getBoard());
+      this.refreshTray(true);
+      this.scoreText.setText(`Score ${this.boardManager.getState().score}`);
+      this.bestText.setText(`Best ${this.boardManager.getState().bestScore}`);
+      this.pulseScore();
+
+      if (outcome.breakdown && outcome.breakdown.total > 0 && lines.linesCleared > 0) {
+        this.showScoreFloat(outcome.breakdown.total, lines.clearedCells);
+      }
+
+      if (outcome.isGameOver) {
+        this.audio.playGameOver();
+        this.showGameOver();
+      }
+    };
+
+    if (lines.clearedCells.length > 0) {
+      this.time.delayedCall(140, () => {
+        this.audio.playClear(lines.linesCleared);
+        this.boardView.animateClear(lines.clearedCells, finish);
+      });
+    } else {
+      this.time.delayedCall(140, finish);
     }
+  }
+
+  private pulseScore(): void {
+    this.tweens.add({
+      targets: this.scoreText,
+      scale: 1.12,
+      duration: 100,
+      yoyo: true,
+      ease: 'Quad.Out',
+    });
+  }
+
+  private showScoreFloat(points: number, cells: readonly Coord[]): void {
+    if (cells.length === 0) {
+      return;
+    }
+    let sumX = 0;
+    let sumY = 0;
+    for (const c of cells) {
+      const w = this.boardView.cellToWorld(c.x, c.y);
+      sumX += w.x;
+      sumY += w.y;
+    }
+    const x = sumX / cells.length;
+    const y = sumY / cells.length;
+
+    const label = this.add
+      .text(x, y, `+${points}`, {
+        fontFamily: 'Segoe UI, system-ui, sans-serif',
+        fontSize: '26px',
+        fontStyle: 'bold',
+        color: PALETTE.primaryPurple,
+      })
+      .setOrigin(0.5)
+      .setDepth(50)
+      .setAlpha(0);
+
+    this.tweens.add({
+      targets: label,
+      y: y - 46,
+      alpha: 1,
+      duration: 220,
+      ease: 'Cubic.Out',
+      onComplete: () => {
+        this.tweens.add({
+          targets: label,
+          alpha: 0,
+          y: y - 70,
+          duration: 280,
+          delay: 120,
+          onComplete: () => label.destroy(),
+        });
+      },
+    });
   }
 
   private renderAll(): void {
@@ -387,10 +522,82 @@ export class GameScene extends Phaser.Scene {
     this.bestText.setText(`Best ${state.bestScore}`);
   }
 
+  private showTutorial(): void {
+    this.inputLocked = true;
+    const container = this.add.container(0, 0).setDepth(220);
+
+    const dim = this.add.rectangle(
+      DESIGN_WIDTH / 2,
+      DESIGN_HEIGHT / 2,
+      DESIGN_WIDTH,
+      DESIGN_HEIGHT,
+      0x2a2550,
+      0.55,
+    );
+
+    const panel = this.add.graphics();
+    panel.fillStyle(Phaser.Display.Color.HexStringToColor(PALETTE.white).color, 1);
+    panel.fillRoundedRect(DESIGN_WIDTH / 2 - 155, DESIGN_HEIGHT / 2 - 150, 310, 300, 28);
+
+    const title = this.add
+      .text(DESIGN_WIDTH / 2, DESIGN_HEIGHT / 2 - 110, 'How to Play', {
+        fontFamily: 'Segoe UI, system-ui, sans-serif',
+        fontSize: '26px',
+        fontStyle: 'bold',
+        color: PALETTE.primaryPurple,
+      })
+      .setOrigin(0.5);
+
+    const body = this.add
+      .text(
+        DESIGN_WIDTH / 2,
+        DESIGN_HEIGHT / 2 - 20,
+        '1. Drag a piece from the tray\n    onto the board.\n\n2. Fill a full row or column\n    to clear it and score.\n\n3. Game over when none of your\n    remaining pieces can fit.',
+        {
+          fontFamily: 'Segoe UI, system-ui, sans-serif',
+          fontSize: '15px',
+          color: PALETTE.text,
+          align: 'left',
+          lineSpacing: 4,
+        },
+      )
+      .setOrigin(0.5);
+
+    const btn = this.add.graphics();
+    btn.fillStyle(Phaser.Display.Color.HexStringToColor(PALETTE.primaryPurple).color, 1);
+    btn.fillRoundedRect(DESIGN_WIDTH / 2 - 90, DESIGN_HEIGHT / 2 + 95, 180, 46, 23);
+    btn.setInteractive(
+      new Phaser.Geom.Rectangle(DESIGN_WIDTH / 2 - 90, DESIGN_HEIGHT / 2 + 95, 180, 46),
+      Phaser.Geom.Rectangle.Contains,
+    );
+
+    const btnLabel = this.add
+      .text(DESIGN_WIDTH / 2, DESIGN_HEIGHT / 2 + 118, 'Got it', {
+        fontFamily: 'Segoe UI, system-ui, sans-serif',
+        fontSize: '18px',
+        fontStyle: 'bold',
+        color: PALETTE.white,
+      })
+      .setOrigin(0.5);
+
+    const dismiss = (): void => {
+      this.storage.setTutorialSeen(true);
+      this.audio.playUi();
+      container.destroy();
+      this.overlay = undefined;
+      this.inputLocked = false;
+    };
+
+    btn.on('pointerup', dismiss);
+    container.add([dim, panel, title, body, btn, btnLabel]);
+    this.overlay = container;
+  }
+
   private showGameOver(): void {
     if (this.overlay) {
       this.overlay.destroy();
     }
+    this.inputLocked = true;
     const state = this.boardManager.getState();
     const container = this.add.container(0, 0).setDepth(200);
 
@@ -451,10 +658,12 @@ export class GameScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     const restart = (): void => {
+      this.audio.playUi();
       this.overlay?.destroy();
       this.overlay = undefined;
+      this.inputLocked = false;
       this.boardManager.restart(this.storage.getBestScore());
-      this.refreshTray();
+      this.refreshTray(true);
       this.renderAll();
     };
 

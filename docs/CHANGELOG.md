@@ -1,5 +1,22 @@
 # Block Quest — Changelog
 
+## 2026-11-16 — Phase 3 UX polish
+
+### Added
+- Placement pop + line-clear shrink/fade animations; score floaters; tray appear tween
+- `AudioService` procedural SFX (place, clear, invalid, game over, UI)
+- Mute toggle with localStorage persistence
+- First-run tutorial overlay (`tutorialSeen` persistence)
+- Safe-area padding and short-screen canvas framing
+
+### Changed
+- `StorageService` supports mute + tutorial flags
+- Game config: scale min bounds, antialias + roundPixels
+
+### Verified
+- `npm test` — 17 passed
+- `npm run build` — success
+
 ## 2026-11-16 — UI polish + tray picking fix
 
 ### Changed

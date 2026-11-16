@@ -78,3 +78,17 @@ Record significant decisions here. New chats must read this before changing esta
 - **Decision:** Tray pieces use slot-sized hit boxes and manual pointer drag (with vertical lift). Short tap no longer auto-places.
 - **Rationale:** Phaser Container `setDraggable` with tight shape bounds made pieces hard to pick; auto first-cell tap felt unpredictable.
 - **Status:** Accepted
+
+## DEC-012 — Procedural SFX (no audio assets)
+
+- **Date:** 2026-11-16
+- **Decision:** Use Web Audio API oscillators for MVP sound; persist mute in localStorage.
+- **Rationale:** Avoid asset pipeline and CDN dependency; offline-friendly; easy to replace with authored SFX later.
+- **Status:** Accepted
+
+## DEC-013 — First-run tutorial is a single dismissible panel
+
+- **Date:** 2026-11-16
+- **Decision:** Show a one-time “How to Play” overlay; store `tutorialSeen`. No interactive coach marks in Phase 3.
+- **Rationale:** Fast onboarding without blocking core play loop development.
+- **Status:** Accepted

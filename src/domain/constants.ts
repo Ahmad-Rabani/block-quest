@@ -20,6 +20,8 @@ export const SCORING = {
 
 export const STORAGE_KEYS = {
   bestScore: 'block-quest.bestScore',
+  muted: 'block-quest.muted',
+  tutorialSeen: 'block-quest.tutorialSeen',
 } as const;
 
 export const PALETTE = {
