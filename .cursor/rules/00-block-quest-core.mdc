@@ -12,7 +12,7 @@ Commercial 2D block puzzle. Portrait mobile (Android/iOS) + browser for developm
 
 1. Read `docs/PROJECT_OVERVIEW.md` before major work.
 2. Read `docs/CURRENT_STATUS.md` before starting a task.
-3. Read `docs/DEVELOPMENT_ROADMAP.md` to identify the current phase.
+3. Read `docs/DEVELOPMENT_ROADMAP.md` and `docs/PHASES_GUIDE.md` to identify the current phase.
 4. Read `docs/ARCHITECTURE.md` before changing architecture.
 5. Read `docs/DEVELOPMENT_WORKFLOW.md` before implementation.
 6. Read `docs/DECISIONS.md` before changing an established technical decision.

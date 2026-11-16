@@ -120,3 +120,10 @@ Record significant decisions here. New chats must read this before changing esta
 - **Decision:** Version-control `android/` sources; keep `ios/` out of the tree on Windows.
 - **Rationale:** Enables Android iteration without macOS; respects DEC-006.
 - **Status:** Accepted
+
+## DEC-018 — Skip Phase 6 on Windows; brand assets before store QA
+
+- **Date:** 2026-11-16
+- **Decision:** Do not create iOS project here. Start Phase 9 icon/splash assets so branding is visible; Phase 8 QA follows; Phase 7 still blocked.
+- **Rationale:** User could not see custom images (none existed); iOS is impossible without macOS.
+- **Status:** Accepted

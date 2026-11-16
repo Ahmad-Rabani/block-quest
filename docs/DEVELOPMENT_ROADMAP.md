@@ -139,7 +139,15 @@ Phases must be completed against acceptance criteria. Do not mark complete witho
 
 ## PHASE 6 — iOS Integration
 
-**Status:** Not started — requires macOS/Xcode later
+**Status:** Deferred on Windows — requires macOS/Xcode (DEC-006)
+
+### Tasks
+
+- [ ] Configure Capacitor iOS (on Mac)
+- [ ] Open in Xcode; set app identity
+- [ ] Simulator + device tests
+- [ ] Lifecycle + safe areas
+- [ ] Offline gameplay validation
 
 ---
 
@@ -153,7 +161,7 @@ No ads or analytics before approval.
 
 ## PHASE 8 — Quality Assurance
 
-**Status:** Not started
+**Status:** Next up (after brand assets)
 
 Rules, edge cases, mobile interaction, sizes, low-end devices, interruptions, persistence, offline.
 
@@ -161,6 +169,16 @@ Rules, edge cases, mobile interaction, sizes, low-end devices, interruptions, pe
 
 ## PHASE 9 — Release Preparation
 
-**Status:** Not started — do not publish without explicit approval
+**Status:** In progress (brand icons/splash started) — do not publish without explicit approval
 
-Icons, splash, screenshots, descriptions, privacy, platform review, release builds, store checklist.
+### Tasks
+
+- [x] Create Block Quest brand icon + splash masters
+- [x] Generate Android mipmaps / splash drawables + web favicon
+- [x] Show brand icon on BootScene
+- [ ] Store screenshots
+- [ ] Store descriptions
+- [ ] Privacy documentation
+- [ ] Review platform requirements
+- [ ] Prepare release builds
+- [ ] Store submission checklist

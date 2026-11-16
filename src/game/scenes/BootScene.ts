@@ -6,12 +6,24 @@ export class BootScene extends Phaser.Scene {
     super('BootScene');
   }
 
+  preload(): void {
+    // Brand mark from /public — visible in browser; confirms assets are wired.
+    this.load.image('brand-icon', 'icon-192.png');
+  }
+
   create(): void {
     const { width, height } = this.scale;
     this.cameras.main.setBackgroundColor(PALETTE.background);
 
+    if (this.textures.exists('brand-icon')) {
+      this.add
+        .image(width / 2, height / 2 - 70, 'brand-icon')
+        .setDisplaySize(96, 96)
+        .setOrigin(0.5);
+    }
+
     const title = this.add
-      .text(width / 2, height / 2 - 20, 'BLOCK QUEST', {
+      .text(width / 2, height / 2 + 20, 'BLOCK QUEST', {
         fontFamily: 'Segoe UI, system-ui, sans-serif',
         fontSize: '36px',
         fontStyle: 'bold',
@@ -20,7 +32,7 @@ export class BootScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     const subtitle = this.add
-      .text(width / 2, height / 2 + 24, 'Loading…', {
+      .text(width / 2, height / 2 + 64, 'Loading…', {
         fontFamily: 'Segoe UI, system-ui, sans-serif',
         fontSize: '16px',
         color: PALETTE.text,

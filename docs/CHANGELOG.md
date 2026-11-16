@@ -1,5 +1,25 @@
 # Block Quest — Changelog
 
+## 2026-11-16 — Phases guide + brand images
+
+### Clarified
+- Added `docs/PHASES_GUIDE.md` (plain-language phase map)
+- Confirmed prior builds had **no custom images** (Graphics-drawn blocks; Capacitor default icons)
+
+### Added
+- Brand masters in `assets/brand/`
+- Android launcher icons + splash PNGs (Block Quest branded)
+- Web favicon / apple-touch / icon-192
+- BootScene brand icon
+- `npm run assets:brand` generator script
+
+### Deferred
+- Phase 6 iOS on Windows (macOS required)
+
+### Verified
+- Brand asset generation succeeded
+- (tests/build re-run in same milestone)
+
 ## 2026-11-16 — Phase 5 Android / Capacitor
 
 ### Added

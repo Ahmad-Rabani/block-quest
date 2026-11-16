@@ -56,9 +56,11 @@ Ads, analytics, online accounts, unnecessary network requests, store publishing,
 
 | Document | Purpose |
 |----------|---------|
+| `docs/PHASES_GUIDE.md` | Plain-language explanation of every phase |
 | `docs/CURRENT_STATUS.md` | Current phase, completed work, bugs |
 | `docs/DEVELOPMENT_ROADMAP.md` | Phased plan and acceptance criteria |
 | `docs/ARCHITECTURE.md` | Layering and module responsibilities |
 | `docs/DEVELOPMENT_WORKFLOW.md` | Mandatory task workflow |
 | `docs/DECISIONS.md` | Technical decisions (ADR-style) |
 | `docs/CHANGELOG.md` | Milestone change history |
+| `docs/ANDROID.md` | Capacitor Android setup |
