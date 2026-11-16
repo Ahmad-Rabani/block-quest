@@ -71,9 +71,17 @@ Phases must be completed against acceptance criteria. Do not mark complete witho
 
 ## PHASE 3 — Gameplay UX and Polish
 
-**Status:** Next up
+**Status:** In progress
 
-Animations, line-clear feedback, touch accuracy, SFX + mute, simple onboarding, multi-size testing, performance.
+### Tasks
+
+- [x] Improve tray touch/mouse picking accuracy
+- [x] First-pass UI chrome (header chips, tray panel, board depth)
+- [ ] Improve placement / line-clear animations
+- [ ] Add sound effects and mute controls
+- [ ] Add a simple onboarding/tutorial
+- [ ] Test multiple screen sizes
+- [ ] Improve performance as needed
 
 ---
 

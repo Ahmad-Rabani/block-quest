@@ -15,18 +15,26 @@ export class BoardView {
   private readonly cellGraphics: Phaser.GameObjects.Graphics;
   private readonly previewGraphics: Phaser.GameObjects.Graphics;
   private readonly boardBg: Phaser.GameObjects.Graphics;
+  private readonly boardShadow: Phaser.GameObjects.Graphics;
 
   constructor(scene: Phaser.Scene, layout: BoardLayout) {
     this.scene = scene;
     this.layout = layout;
-    this.boardBg = scene.add.graphics();
-    this.cellGraphics = scene.add.graphics();
-    this.previewGraphics = scene.add.graphics();
+    this.boardShadow = scene.add.graphics().setDepth(0);
+    this.boardBg = scene.add.graphics().setDepth(1);
+    this.cellGraphics = scene.add.graphics().setDepth(2);
+    this.previewGraphics = scene.add.graphics().setDepth(3);
     this.drawBackground();
   }
 
   getLayout(): BoardLayout {
     return this.layout;
+  }
+
+  getBoardBottom(): number {
+    const { originY, cellSize, gap } = this.layout;
+    const stride = cellSize + gap;
+    return originY + BOARD_SIZE * stride - gap;
   }
 
   /** Convert pointer world position to board cell, or null if outside. */
@@ -59,42 +67,54 @@ export class BoardView {
     this.cellGraphics.clear();
     const { originX, originY, cellSize, gap } = this.layout;
     const stride = cellSize + gap;
-    const radius = Math.max(4, cellSize * 0.18);
+    const radius = Math.max(5, cellSize * 0.2);
 
     for (let y = 0; y < BOARD_SIZE; y++) {
       for (let x = 0; x < BOARD_SIZE; x++) {
         const value = board[y]![x]!;
         const px = originX + x * stride;
         const py = originY + y * stride;
+
         if (value === EMPTY_CELL) {
-          this.cellGraphics.fillStyle(Phaser.Display.Color.HexStringToColor(PALETTE.cellEmpty).color, 1);
+          this.cellGraphics.fillStyle(
+            Phaser.Display.Color.HexStringToColor(PALETTE.cellEmpty).color,
+            1,
+          );
+          this.cellGraphics.fillRoundedRect(px, py, cellSize, cellSize, radius);
         } else {
           const hex = COLOR_HEX[value] ?? PALETTE.primaryPurple;
-          this.cellGraphics.fillStyle(Phaser.Display.Color.HexStringToColor(hex).color, 1);
+          const color = Phaser.Display.Color.HexStringToColor(hex).color;
+          // Soft contact shadow
+          this.cellGraphics.fillStyle(0x2a2550, 0.14);
+          this.cellGraphics.fillRoundedRect(px + 1, py + 2, cellSize, cellSize, radius);
+          this.cellGraphics.fillStyle(color, 1);
+          this.cellGraphics.fillRoundedRect(px, py, cellSize, cellSize, radius);
+          this.cellGraphics.fillStyle(0xffffff, 0.2);
+          this.cellGraphics.fillRoundedRect(
+            px + 2,
+            py + 2,
+            cellSize - 4,
+            Math.max(4, cellSize * 0.28),
+            radius * 0.55,
+          );
         }
-        this.cellGraphics.fillRoundedRect(px, py, cellSize, cellSize, radius);
       }
     }
   }
 
-  showPreview(
-    piece: PieceShape,
-    origin: Coord | null,
-    valid: boolean,
-  ): void {
+  showPreview(piece: PieceShape, origin: Coord | null, valid: boolean): void {
     this.previewGraphics.clear();
     if (!origin) {
       return;
     }
     const { originX, originY, cellSize, gap } = this.layout;
     const stride = cellSize + gap;
-    const radius = Math.max(4, cellSize * 0.18);
+    const radius = Math.max(5, cellSize * 0.2);
     const color = Phaser.Display.Color.HexStringToColor(
       valid ? PALETTE.primaryPurple : '#FF5A5A',
     ).color;
-    const alpha = valid ? 0.4 : 0.35;
 
-    this.previewGraphics.fillStyle(color, alpha);
+    this.previewGraphics.fillStyle(color, valid ? 0.38 : 0.32);
     for (const c of piece.cells) {
       const x = origin.x + c.x;
       const y = origin.y + c.y;
@@ -115,11 +135,11 @@ export class BoardView {
     if (cells.length === 0) {
       return;
     }
-    const flash = this.scene.add.graphics();
+    const flash = this.scene.add.graphics().setDepth(4);
     const { originX, originY, cellSize, gap } = this.layout;
     const stride = cellSize + gap;
-    const radius = Math.max(4, cellSize * 0.18);
-    flash.fillStyle(0xffffff, 0.85);
+    const radius = Math.max(5, cellSize * 0.2);
+    flash.fillStyle(0xffffff, 0.9);
     for (const c of cells) {
       const px = originX + c.x * stride;
       const py = originY + c.y * stride;
@@ -128,7 +148,8 @@ export class BoardView {
     this.scene.tweens.add({
       targets: flash,
       alpha: 0,
-      duration: 220,
+      duration: 260,
+      ease: 'Cubic.Out',
       onComplete: () => flash.destroy(),
     });
   }
@@ -136,15 +157,25 @@ export class BoardView {
   private drawBackground(): void {
     const { originX, originY, cellSize, gap } = this.layout;
     const stride = cellSize + gap;
-    const pad = gap * 2;
+    const pad = 14;
     const size = BOARD_SIZE * stride - gap;
+
+    this.boardShadow.fillStyle(0x6545d6, 0.12);
+    this.boardShadow.fillRoundedRect(
+      originX - pad + 4,
+      originY - pad + 8,
+      size + pad * 2,
+      size + pad * 2,
+      22,
+    );
+
     this.boardBg.fillStyle(Phaser.Display.Color.HexStringToColor(PALETTE.white).color, 1);
     this.boardBg.fillRoundedRect(
       originX - pad,
       originY - pad,
       size + pad * 2,
       size + pad * 2,
-      18,
+      22,
     );
   }
 }

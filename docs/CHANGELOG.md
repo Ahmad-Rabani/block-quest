@@ -1,5 +1,19 @@
 # Block Quest — Changelog
 
+## 2026-11-16 — UI polish + tray picking fix
+
+### Changed
+- Tray input: slot-sized hit areas, manual pointer drag, drag lift above finger/cursor
+- Game UI: score/best chips, ambient backdrop, board depth, tray panel with slot pads, richer block shading
+- Page CSS: soft gradient atmosphere and stronger canvas frame
+
+### Fixed
+- Unreliable piece picking from the bottom tray (tight Phaser Container hit areas / drag)
+
+### Verified
+- `npm test` — 17 passed
+- `npm run build` — success
+
 ## 2026-11-16 — Phases 0–2 MVP
 
 ### Added

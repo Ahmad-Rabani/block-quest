@@ -70,4 +70,11 @@ Record significant decisions here. New chats must read this before changing esta
 - **Date:** 2026-11-16
 - **Decision:** Short tap on a tray piece places it at the first valid origin (scan order top-left). Drag remains primary.
 - **Rationale:** Spec asked for tap-to-place where practical; refined targeting deferred to Phase 3.
-- **Status:** Accepted (may revisit in Phase 3)
+- **Status:** Superseded by DEC-011
+
+## DEC-011 — Manual tray drag + full-slot hit targets
+
+- **Date:** 2026-11-16
+- **Decision:** Tray pieces use slot-sized hit boxes and manual pointer drag (with vertical lift). Short tap no longer auto-places.
+- **Rationale:** Phaser Container `setDraggable` with tight shape bounds made pieces hard to pick; auto first-cell tap felt unpredictable.
+- **Status:** Accepted
